@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#030712">
+    <meta name="description" content="VEKTOR NEXUS - Sistema Integrado de Cálculos de Eficiencia y Producción">
+
+    <title>VEKTOR NEXUS - Dragon Ball Neon Edition</title>
+    
+    <!-- Configuración PWA Manifest Web App Embed -->
+    <link rel="manifest" href="data:application/manifest+json;utf8,%7B%22name%22%3A%22VEKTOR%20NEXUS%22%2C%22short_name%22%3A%22Nexus%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23030712%22%2C%22theme_color%22%3A%22%2300f3ff%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fimages.unsplash.com%2Fphoto-1578632767115-351597cf2477%3Fw%3D192%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
+
+    <!-- Fuentes Tipográficas -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS Engine -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        nexusBlue: '#00f3ff',
+                        nexusOrange: '#ff6c00',
+                        nexusMagenta: '#ff007f',
+                        nexusGreen: '#39ff14',
+                        nexusYellow: '#ffe600',
+                        nexusPurple: '#b500ff',
+                        nexusDark: '#030712'
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                        audiowide: ['Audiowide', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Hojas de Estilos y Efectos Neón -->
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-orange: #ff6c00;
+            --neon-pink: #ff007f;
+            --neon-green: #39ff14;
+            --neon-yellow: #ffe600;
+            --neon-purple: #b500ff;
+            --bg-ultra-dark: #030712;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body { 
+            background-color: var(--bg-ultra-dark);
+            color: #ffffff; 
+            font-family: 'Rajdhani', sans-serif; 
+            overflow-x: hidden;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Scrollbars Estilizados */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(3, 7, 18, 0.9);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 243, 255, 0.4);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 243, 255, 0.8);
+        }
+
+        /* FONDOS DINÁMICOS Y AURAS GOKU/DRAGON BALL */
+        .bg-db-lock {
+            background: linear-gradient(180deg, rgba(3, 7, 18, 0.82) 0%, rgba(3, 7, 18, 0.96) 100%), 
+                        url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1200&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-db-home {
+            background: linear-gradient(180deg, rgba(5, 8, 22, 0.88) 0%, rgba(3, 7, 18, 0.97) 100%), 
+                        url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .bg-db-bio {
+            background: linear-gradient(180deg, rgba(15, 3, 25, 0.92) 0%, rgba(3, 7, 18, 0.96) 100%), 
+                        url('https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=1000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-db-eficiencia {
+            background: linear-gradient(180deg, rgba(2, 20, 35, 0.92) 0%, rgba(3, 7, 18, 0.96) 100%), 
+                        url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-db-premium {
+            background: linear-gradient(180deg, rgba(20, 2, 30, 0.94) 0%, rgba(3, 7, 18, 0.97) 100%), 
+                        url('https://images.unsplash.com/photo-1550684848-acc1f5b08114?q=80&w=1000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-db-tiempo {
+            background: linear-gradient(180deg, rgba(2, 25, 10, 0.94) 0%, rgba(3, 7, 18, 0.97) 100%), 
+                        url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* PANELES DE CRISTAL / GLASSMORPHISM */
+        .glass-panel { 
+            background: rgba(11, 17, 32, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12); 
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.85);
+        }
+
+        .glass-card {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* ESTRUCTURA DE NAVEGACIÓN Y VENTANAS */
+        .view-window { 
+            position: fixed;
+            top: 0; 
+            left: 100%; 
+            width: 100%; 
+            height: 100%; 
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 50; 
+            overflow-y: auto;
+        }
+
+        .view-window.active { 
+            left: 0; 
+        }
+
+        /* CONTROLES DE ENTRADA Y BOTONES */
+        .input-pro { 
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid #1e293b; 
+            color: #ffffff; 
+            border-radius: 14px; 
+            padding: 14px 16px; 
+            width: 100%; 
+            font-weight: 700; 
+            outline: none;
+            transition: all 0.25s ease-in-out;
+        }
+
+        .input-pro:focus { 
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.5); 
+            background: rgba(15, 23, 42, 0.98);
+        }
+
+        .lion-btn { 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            cursor: pointer; 
+        }
+
+        .lion-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .lion-btn:active { 
+            transform: scale(0.96); 
+        }
+
+        /* BORDES Y SOMBRAS NEÓN REGULARES */
+        .neon-border-orange { 
+            border: 2px solid var(--neon-orange); 
+            box-shadow: 0 0 20px rgba(255, 108, 0, 0.35); 
+        }
+        .neon-border-cyan { 
+            border: 2px solid var(--neon-cyan); 
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.35); 
+        }
+        .neon-border-purple { 
+            border: 2px solid var(--neon-purple); 
+            box-shadow: 0 0 20px rgba(181, 0, 255, 0.35); 
+        }
+        .neon-border-green { 
+            border: 2px solid var(--neon-green); 
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.35); 
+        }
+        .neon-border-yellow { 
+            border: 2px solid var(--neon-yellow); 
+            box-shadow: 0 0 20px rgba(255, 230, 0, 0.35); 
+        }
+        .neon-border-pink { 
+            border: 2px solid var(--neon-pink); 
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.35); 
+        }
+
+        /* ANIMACIONES Y EFECTOS VISUALES */
+        @keyframes pulseAura {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.6)); }
+            50% { filter: drop-shadow(0 0 30px rgba(255, 108, 0, 0.9)); }
+        }
+
+        .animate-aura {
+            animation: pulseAura 3s infinite ease-in-out;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(1000%); }
+        }
+
+        .scanline-effect {
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            opacity: 0.6;
+            animation: scanline 8s linear infinite;
+        }
+    </style>
+</head>
+<body class="max-w-md mx-auto relative min-h-screen bg-nexusDark text-white shadow-2xl">
+
+    <!-- ========================================== -->
+    <!-- 1. PANTALLA DE AUTENTICACIÓN (TOKEN + PIN) -->
+    <!-- ========================================== -->
+    <div id="lock-screen" class="min-h-screen flex flex-col justify-center items-center p-6 text-center bg-db-lock absolute w-full z-50">
+        <div class="scanline-effect"></div>
+        <div class="glass-panel p-8 rounded-[36px] w-full border-2 border-[#ff6c00] shadow-[0_0_40px_rgba(255,108,0,0.45)] relative overflow-hidden">
+            
+            <div class="w-24 h-24 mx-auto mb-4 rounded-full border-2 border-[#00f3ff] overflow-hidden shadow-[0_0_25px_rgba(0,243,255,0.7)] flex items-center justify-center bg-black/70 animate-aura">
+                <span class="text-5xl">🐉</span>
+            </div>
+
+            <h1 class="text-3xl font-black uppercase tracking-wider font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-[#ff6c00] via-[#ffe600] to-[#00f3ff]">
+                VEKTOR NEXUS
+            </h1>
+            <p class="text-[10px] text-gray-300 font-bold uppercase tracking-[0.25em] mt-1 mb-6">
+                Sistema Integrado de Cálculos de Eficiencia y Producción
+            </p>
+            
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-left text-[10px] text-[#00f3ff] font-black uppercase tracking-wider mb-1">
+                        Token de Usuario (Columna A)
+                    </label>
+                    <input type="text" id="token-input" class="input-pro text-center text-lg uppercase font-orbitron" placeholder="Ej: angel0301">
+                </div>
+                <div>
+                    <label class="block text-left text-[10px] text-[#ffe600] font-black uppercase tracking-wider mb-1">
+                        PIN Personal de Seguridad (Columna D)
+                    </label>
+                    <input type="password" id="pin-input" maxlength="4" class="input-pro text-center text-2xl tracking-[0.4em]" placeholder="****">
+                </div>
+            </div>
+
+            <button onclick="verificarAccesoGeneral()" class="lion-btn w-full py-4 bg-gradient-to-r from-[#ff6c00] via-[#ff007f] to-[#00f3ff] hover:opacity-90 rounded-2xl font-black text-white shadow-[0_0_25px_rgba(255,108,0,0.6)] font-orbitron text-xs uppercase tracking-widest">
+                VERIFICAR ACCESO
+            </button>
+
+            <div class="mt-6 pt-4 border-t border-gray-800 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                Desarrollado por <span class="text-[#00f3ff]">Angel Castillo</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. MODAL EMERGENTE DE COMUNICADOS VIP      -->
+    <!-- ========================================== -->
+    <div id="modal-comunicados" class="fixed inset-0 bg-black/85 z-[100] hidden flex items-center justify-center p-6 backdrop-blur-md">
+        <div class="glass-panel p-6 rounded-[32px] w-full border-2 border-[#ffe600] shadow-[0_0_35px_rgba(255,230,0,0.5)] relative">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-3 mb-4">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl">📢</span>
+                    <h3 class="text-sm font-black font-orbitron text-[#ffe600] uppercase tracking-wider">
+                        Avisos del Administrador
+                    </h3>
+                </div>
+                <button onclick="cerrarComunicados()" class="text-gray-400 hover:text-white font-bold text-lg px-2">✕</button>
+            </div>
+            
+            <div id="comunicado-body" class="space-y-3 max-h-64 overflow-y-auto pr-1">
+                <!-- Se llena dinámicamente desde la API -->
+            </div>
+
+            <button onclick="cerrarComunicados()" class="lion-btn w-full mt-5 py-3 bg-gradient-to-r from-[#ffe600] to-[#ff6c00] text-black font-black font-orbitron text-xs rounded-xl uppercase tracking-wider shadow-[0_0_15px_rgba(255,230,0,0.4)]">
+                Entendido
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. MENÚ PRINCIPAL Y PANTALLA HOME          -->
+    <!-- ========================================== -->
+    <div id="app-home" class="hidden p-6 pb-24 bg-db-home min-h-screen relative">
+        
+        <!-- ENCABEZADO Y MARCA -->
+        <header class="my-6 text-center border-b-2 border-slate-800/80 pb-6 relative">
+            <div class="inline-block px-3 py-1 bg-gradient-to-r from-[#ff6c00] to-[#ff007f] rounded-full text-[9px] font-black uppercase tracking-widest text-white mb-2 shadow-[0_0_10px_rgba(255,108,0,0.5)]">
+                Edición DB Goku Neón
+            </div>
+            <h1 class="text-4xl font-black leading-none uppercase tracking-tighter text-white font-orbitron">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6c00] via-[#ffe600] to-[#00f3ff]">VEKTOR NEXUS</span>
+            </h1>
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-2">
+                Operador Activo: <span id="user-display-name" class="text-[#00f3ff] font-orbitron font-bold">---</span>
+            </p>
+
+            <!-- Botón de Instalación PWA -->
+            <button id="pwa-install-btn" class="hidden lion-btn mt-4 mx-auto py-2.5 px-5 bg-gradient-to-r from-[#00f3ff] via-[#39ff14] to-[#ffe600] text-black font-black text-xs rounded-full uppercase tracking-wider shadow-[0_0_20px_rgba(0,243,255,0.7)] font-orbitron">
+                📲 INSTALAR APP PWA
+            </button>
+        </header>
+
+        <!-- RECUADRO DE ROL Y USUARIO -->
+        <div class="glass-panel p-4 rounded-2xl border border-[#00f3ff]/40 mb-6 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00f3ff] to-[#b500ff] flex items-center justify-center font-orbitron font-black text-black">
+                    VN
+                </div>
+                <div>
+                    <span class="text-[9px] font-black uppercase text-gray-400 block tracking-wider">Estado de Conexión</span>
+                    <span class="text-xs font-black text-[#39ff14] uppercase tracking-wide flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-[#39ff14] animate-ping mr-2"></span> Sincronizado
+                    </span>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-[9px] font-black uppercase text-gray-400 block tracking-wider">Servidor</span>
+                <span class="text-xs font-black font-orbitron text-[#ffe600]">ONLINE 2026</span>
+            </div>
+        </div>
+
+        <!-- REJILLA DE MENÚ DE MÓDULOS -->
+        <div class="grid grid-cols-2 gap-4">
+            
+            <!-- Módulo BioHorario -->
+            <div id="btn-menu-biohorario" onclick="openView('view-biohorario')" class="lion-btn glass-panel p-5 rounded-2xl text-center neon-border-orange col-span-2 relative overflow-hidden group">
+                <div class="flex items-center justify-between">
+                    <div class="text-left">
+                        <span class="text-xs font-black uppercase text-[#ff6c00] tracking-wider block font-orbitron">BioHorario Dinámico</span>
+                        <span class="text-[10px] text-gray-300 font-bold block mt-1">Control de Jornada y Tiempos Muertos</span>
+                    </div>
+                    <span class="text-4xl group-hover:scale-110 transition-transform">⏳</span>
+                </div>
+            </div>
+
+            <!-- Módulo Eficiencia Completa -->
+            <div id="btn-menu-eficiencia" onclick="openView('view-eficiencia')" class="lion-btn glass-panel p-5 rounded-2xl text-center neon-border-cyan flex flex-col justify-between">
+                <span class="text-3xl block mb-2">📊</span>
+                <div>
+                    <span class="text-xs font-black uppercase text-white font-orbitron block leading-tight">Eficiencia</span>
+                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Completa</span>
+                </div>
+            </div>
+
+            <!-- Módulo Calculadora Premium DB -->
+            <div id="btn-menu-premium" onclick="openView('view-premium')" class="lion-btn glass-panel p-5 rounded-2xl text-center neon-border-purple flex flex-col justify-between">
+                <span class="text-3xl block mb-2">💎</span>
+                <div>
+                    <span class="text-xs font-black uppercase text-white font-orbitron block leading-tight">Calculadora</span>
+                    <span class="text-[9px] font-bold text-[#b500ff] uppercase tracking-widest">Premium DB</span>
+                </div>
+            </div>
+
+            <!-- Módulo Tiempo por Docenaje -->
+            <div id="btn-menu-tiempo" onclick="openView('view-tiempo')" class="lion-btn glass-panel p-5 rounded-2xl text-center neon-border-green flex flex-col justify-between">
+                <span class="text-3xl block mb-2">⏱️</span>
+                <div>
+                    <span class="text-xs font-black uppercase text-white font-orbitron block leading-tight">Tiempo por</span>
+                    <span class="text-[9px] font-bold text-[#39ff14] uppercase tracking-widest">Docenaje</span>
+                </div>
+            </div>
+
+            <!-- Módulo Base Metas Drive -->
+            <div id="btn-menu-metas" onclick="openView('view-metas')" class="lion-btn glass-panel p-5 rounded-2xl text-center neon-border-yellow flex flex-col justify-between">
+                <span class="text-3xl block mb-2">🎯</span>
+                <div>
+                    <span class="text-xs font-black uppercase text-white font-orbitron block leading-tight">Base Metas</span>
+                    <span class="text-[9px] font-bold text-[#ffe600] uppercase tracking-widest">Drive (.xlsx)</span>
+                </div>
+            </div>
+
+            <!-- Módulo Historial Guardado -->
+            <div id="btn-menu-historial" onclick="openView('view-historial')" class="lion-btn glass-panel p-5 rounded-2xl text-center neon-border-pink col-span-2">
+                <div class="flex items-center justify-between">
+                    <div class="text-left">
+                        <span class="text-xs font-black uppercase text-[#ff007f] font-orbitron tracking-wider block">Historial Guardado</span>
+                        <span class="text-[10px] text-gray-300 font-bold block mt-1">Reportes PDF e Imágenes en Google Drive</span>
+                    </div>
+                    <span class="text-3xl">📂</span>
+                </div>
+            </div>
+
+            <!-- Módulo VIP Panel Administrador -->
+            <div id="btn-admin-panel" onclick="openView('view-admin')" class="hidden lion-btn glass-panel p-6 rounded-3xl text-center col-span-2 border-2 border-[#ffe600] shadow-[0_0_30px_rgba(255,230,0,0.5)]">
+                <span class="text-4xl block mb-2">👑</span>
+                <span class="text-sm font-black font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-[#ffe600] via-[#ff6c00] to-[#ff007f] uppercase tracking-wider">
+                    PANEL VIP MODERADOR
+                </span>
+                <p class="text-[9px] text-gray-300 font-bold uppercase mt-1 tracking-widest">
+                    Gestión Exclusiva de Usuarios y Comunicados
+                </p>
+            </div>
+
+        </div>
+
+        <!-- PIE DE PÁGINA -->
+        <footer class="mt-10 text-center text-[10px] text-gray-300 font-bold uppercase tracking-widest">
+            VEKTOR NEXUS v4.0 • 2026
+        </footer>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 4. MÓDULO 1: BIOHORARIO DINÁMICO          -->
+    <!-- ========================================== -->
+    <div id="view-biohorario" class="view-window p-6 bg-db-bio">
+        <div class="flex items-center justify-between mb-6 border-b border-gray-800 pb-4">
+            <div class="flex items-center">
+                <button onclick="closeView()" class="lion-btn text-white font-black text-xl mr-4 px-4 py-2 bg-gradient-to-r from-[#ff007f] to-[#ff6c00] rounded-xl shadow-[0_0_15px_rgba(255,0,127,0.5)]">←</button>
+                <div>
+                    <h2 class="text-lg font-black font-orbitron uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#ff007f] to-[#ff6c00]">
+                        BIOHORARIO DINÁMICO
+                    </h2>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Registro de Horas Efectivas</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="glass-panel p-5 rounded-2xl border border-slate-700">
+                <h3 class="text-xs font-black uppercase text-[#ff007f] font-orbitron mb-3">Configuración de Jornada</h3>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase text-gray-400 mb-1">Hora Inicio</label>
+                        <input type="time" id="bio-inicio" value="07:00" class="input-pro text-center text-xs p-2">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase text-gray-400 mb-1">Hora Fin</label>
+                        <input type="time" id="bio-fin" value="19:00" class="input-pro text-center text-xs p-2">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[9px] font-black uppercase text-gray-400 mb-1">Tiempo Almuerzo/Descansos (Mins)</label>
+                    <input type="number" id="bio-descanso" value="60" class="input-pro text-center text-xs p-2">
+                </div>
+            </div>
+
+            <div class="glass-panel p-5 rounded-2xl border border-slate-700 text-center">
+                <span class="text-[9px] font-black uppercase text-gray-400 block tracking-widest mb-1">Minutos Efectivos Laborables</span>
+                <div id="bio-minutos-totales" class="text-4xl font-black font-orbitron text-[#ff007f]">660 Min</div>
+            </div>
+
+            <button onclick="guardarHistorial('BioHorario')" class="lion-btn w-full py-4 bg-gradient-to-r from-[#ff007f] to-[#ff6c00] text-white rounded-2xl font-black text-xs font-orbitron uppercase tracking-wider shadow-[0_0_20px_rgba(255,0,127,0.5)]">
+                GUARDAR BIOHORARIO EN DRIVE
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 5. MÓDULO 2: EFICIENCIA COMPLETA          -->
+    <!-- ========================================== -->
+    <div id="view-eficiencia" class="view-window p-6 bg-db-eficiencia">
+        <div class="flex items-center justify-between mb-6 border-b border-gray-800 pb-4">
+            <div class="flex items-center">
+                <button onclick="closeView()" class="lion-btn text-black font-black text-xl mr-4 px-4 py-2 bg-gradient-to-r from-[#00f3ff] to-[#39ff14] rounded-xl shadow-[0_0_15px_rgba(0,243,255,0.5)]">←</button>
+                <div>
+                    <h2 class="text-lg font-black font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-[#00f3ff] to-[#39ff14] uppercase">
+                        EFICIENCIA COMPLETA
+                    </h2>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Jornada 11 Horas (7 AM - 7 PM)</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="cargas-list" class="space-y-4 mb-4">
+            <!-- Cargas dinámicas agregadas mediante JS -->
+        </div>
+
+        <button onclick="addCarga()" class="lion-btn w-full py-4 bg-slate-900 border-2 border-dashed border-[#ffe600] text-[#ffe600] rounded-2xl text-xs font-black font-orbitron mb-6 hover:bg-[#ffe600] hover:text-black transition-all">
+            + AÑADIR NUEVA CARGA
+        </button>
+
+        <div id="ef-badge" class="p-8 rounded-[32px] text-center mb-6 shadow-2xl border-2 transition-all duration-500 bg-red-600">
+            <div id="ef-resultado" class="text-6xl font-black font-orbitron text-white">0.00%</div>
+            <p class="text-[11px] font-black uppercase mt-2 text-white tracking-widest">Eficiencia Final</p>
+        </div>
+
+        <button onclick="guardarHistorial('Eficiencia')" class="lion-btn w-full py-4 bg-gradient-to-r from-[#00f3ff] to-[#39ff14] text-black rounded-2xl font-black text-xs font-orbitron uppercase tracking-wider shadow-[0_0_20px_rgba(0,243,255,0.5)]">
+            GUARDAR REGISTRO
+        </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 6. MÓDULO 3: CALCULADORA PREMIUM DB       -->
+    <!-- ========================================== -->
+    <div id="view-premium" class="view-window p-6 bg-db-premium">
+        <div class="flex items-center justify-between mb-6 border-b border-gray-800 pb-4">
+            <div class="flex items-center">
+                <button onclick="closeView()" class="lion-btn text-white font-black text-xl mr-4 px-4 py-2 bg-gradient-to-r from-[#b500ff] to-[#ff007f] rounded-xl shadow-[0_0_15px_rgba(181,0,255,0.5)]">←</button>
+                <div>
+                    <h2 class="text-lg font-black font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-[#b500ff] to-[#ff007f] uppercase">
+                        CALCULADORA PREMIUM DB
+                    </h2>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Cuadre Lógico de Eficiencia Exacto</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel p-4 rounded-2xl border border-slate-800 mb-6 grid grid-cols-2 gap-4">
+            <div>
+                <label for="premium-paros" class="block text-[10px] font-black uppercase text-gray-300 tracking-wider mb-2">Paros Externos (Mins)</label>
+                <input type="number" id="premium-paros" value="0" oninput="calcularMetricasPremium()" class="input-pro text-red-400 font-bold text-center text-lg p-2 focus:border-red-500">
+            </div>
+            <div class="flex items-end">
+                <button onclick="agregarCargaPremium()" class="lion-btn w-full bg-gradient-to-r from-[#b500ff] to-[#ff007f] text-white font-black p-3.5 rounded-xl text-xs font-orbitron uppercase tracking-wider shadow-[0_0_15px_rgba(181,0,255,0.4)]">
+                    + Añadir Carga
+                </button>
+            </div>
+        </div>
+
+        <div id="contenedor-cargas-premium" class="space-y-4 mb-6">
+            <!-- Cargas dinámicas agregadas por script -->
+        </div>
+
+        <div id="premium-badge-resultados" class="p-6 rounded-[28px] text-center mb-6 shadow-2xl border-2 transition-all duration-500 bg-red-600">
+            <span class="text-[10px] uppercase font-black text-white tracking-widest mb-1 block">Eficiencia Premium STD</span>
+            <div id="premium-eff-std-main" class="text-5xl font-black font-orbitron text-white">0.00%</div>
+
+            <div class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-white/20">
+                <div class="text-center">
+                    <span class="text-[9px] uppercase font-black text-gray-200 block">Meta Día Total</span>
+                    <span id="premium-meta-final" class="text-xl font-black font-orbitron text-white">0</span>
+                </div>
+                <div class="text-center">
+                    <span class="text-[9px] uppercase font-black text-gray-200 block">Total Docenas</span>
+                    <span id="premium-total-docenas" class="text-xl font-black font-orbitron text-white">0</span>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="guardarHistorial('Premium')" class="lion-btn w-full py-4 bg-gradient-to-r from-[#b500ff] to-[#ff007f] text-white rounded-2xl font-black text-xs font-orbitron uppercase tracking-wider shadow-[0_0_20px_rgba(181,0,255,0.5)]">
+            GUARDAR CÁLCULO PREMIUM EN DRIVE
+        </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 7. MÓDULO 4: TIEMPO POR DOCENAJE          -->
+    <!-- ========================================== -->
+    <div id="view-tiempo" class="view-window p-6 bg-db-tiempo">
+        <div class="flex items-center mb-6 border-b border-gray-800 pb-4">
+            <button onclick="closeView()" class="lion-btn text-black font-black text-xl mr-4 px-4 py-2 bg-gradient-to-r from-[#39ff14] to-[#00f3ff] rounded-xl shadow-[0_0_15px_rgba(57,255,20,0.5)]">←</button>
+            <div>
+                <h2 class="text-lg font-black font-orbitron uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#39ff14] to-[#00f3ff]">
+                    TIEMPO POR DOCENAJE
+                </h2>
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Simulador de Tiempos</p>
+            </div>
+        </div>
+
+        <div class="glass-panel p-6 rounded-3xl border border-[#39ff14]/50 space-y-4">
+            <div>
+                <label class="block text-[10px] font-black uppercase text-[#39ff14] mb-1">Meta del Día (Docenas)</label>
+                <input type="number" id="ts-meta" oninput="calcTiempoSimple()" class="input-pro text-center text-lg" placeholder="0">
+            </div>
+            <div>
+                <label class="block text-[10px] font-black uppercase text-[#39ff14] mb-1">Docenas Completadas</label>
+                <input type="number" id="ts-doc" oninput="calcTiempoSimple()" class="input-pro text-center text-lg" placeholder="0">
+            </div>
+
+            <div class="p-6 bg-black/60 rounded-2xl border border-gray-800 text-center mt-4">
+                <span class="text-[10px] font-black uppercase text-gray-400 block mb-1">Tiempo Estimado Invertido</span>
+                <div id="ts-res" class="text-4xl font-black font-orbitron text-[#39ff14]">0H 00M</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 8. MÓDULO 5: BASE METAS DRIVE (.XLSX)     -->
+    <!-- ========================================== -->
+    <div id="view-metas" class="view-window p-6 bg-db-home">
+        <div class="flex items-center mb-6 border-b border-gray-800 pb-4">
+            <button onclick="closeView()" class="lion-btn text-black font-black text-xl mr-4 px-4 py-2 bg-gradient-to-r from-[#ffe600] to-[#ff6c00] rounded-xl">←</button>
+            <div>
+                <h2 class="text-lg font-black font-orbitron uppercase text-[#ffe600]">BASE METAS DB 🎯</h2>
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Sincronización Drive Google Sheets</p>
+            </div>
+        </div>
+
+        <div class="glass-panel p-5 rounded-2xl border border-[#ffe600]/40 mb-4">
+            <input type="text" id="busqueda-meta" oninput="filtrarMetasDrive()" placeholder="Buscar por estilo, talla o proceso..." class="input-pro text-xs mb-3">
+            <div id="lista-metas-drive" class="space-y-2 max-h-96 overflow-y-auto pr-1">
+                <!-- Se llena mediante script -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 9. MÓDULO 6: HISTORIAL GUARDADO           -->
+    <!-- ========================================== -->
+    <div id="view-historial" class="view-window p-6 bg-db-home">
+        <div class="flex items-center mb-6 border-b border-gray-800 pb-4">
+            <button onclick="closeView()" class="lion-btn text-black font-black text-xl mr-4 px-4 py-2 bg-gradient-to-r from-[#ff007f] to-[#ff6c00] rounded-xl">←</button>
+            <div>
+                <h2 class="text-lg font-black font-orbitron text-white uppercase">HISTORIAL GUARDADO 📂</h2>
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Archivos PDF e Imágenes en Google Drive</p>
+            </div>
+        </div>
+
+        <div id="historial-content" class="glass-panel p-6 rounded-3xl border border-gray-800 text-center text-xs font-bold text-gray-300">
+            Cargando historial de archivos...
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 10. MÓDULO 7: PANEL VIP MODERADOR ADMIN   -->
+    <!-- ========================================== -->
+    <div id="view-admin" class="view-window p-6 bg-db-home">
+        <div class="flex items-center mb-6 border-b border-gray-800 pb-4">
+            <button onclick="closeView()" class="lion-btn text-black font-black text-xl mr-4 px-4 py-2 bg-gradient-to-r from-[#ffe600] to-[#ff007f] rounded-xl">←</button>
+            <div>
+                <h2 class="text-lg font-black font-orbitron text-[#ffe600] uppercase">MODERADOR VIP 👑</h2>
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Administrador Principal Angel Castillo</p>
+            </div>
+        </div>
+
+        <!-- EMITIR COMUNICADO VIP -->
+        <div class="glass-panel p-6 rounded-2xl mb-6 border-2 border-[#00f3ff] shadow-[0_0_20px_rgba(0,243,255,0.3)]">
+            <h3 class="text-xs font-black font-orbitron text-[#00f3ff] uppercase mb-3">📢 Publicar Nuevo Comunicado VIP</h3>
+            <input type="text" id="com-titulo" placeholder="Título del Aviso" class="input-pro mb-3 text-xs">
+            <textarea id="com-mensaje" placeholder="Escribe el mensaje general para los operadores..." class="input-pro mb-3 text-xs h-20"></textarea>
+            <button onclick="emitirComunicado()" class="lion-btn w-full py-3 bg-gradient-to-r from-[#00f3ff] to-[#39ff14] text-black font-black font-orbitron text-xs rounded-xl uppercase">
+                PUBLICAR AVISO A USUARIOS
+            </button>
+        </div>
+
+        <!-- CREAR NUEVO OPERADOR -->
+        <div class="glass-panel p-6 rounded-2xl border-2 border-[#ff007f]">
+            <h3 class="text-xs font-black font-orbitron text-[#ff007f] uppercase mb-3">Crear Nuevo Token de Usuario</h3>
+            <input type="text" id="adm-nombre" placeholder="Nombre Completo Operador" class="input-pro mb-3 text-xs">
+            <input type="text" id="adm-cont" placeholder="Teléfono / Contacto" class="input-pro mb-3 text-xs">
+            <button onclick="crearUsuario()" class="lion-btn w-full py-3 bg-gradient-to-r from-[#ff007f] to-[#ff6c00] text-white font-black font-orbitron text-xs rounded-xl uppercase">
+                GENERAR TOKEN Y PIN DE SEGURIDAD
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 11. MOTOR JAVASCRIPT CLIENTE (COMPLETO)    -->
+    <!-- ========================================== -->
+    <script>
+        let currentToken = "";
+        let currentUser = null;
+        let cacheMetasGlobal = [
+            {estilo: "ESTILO-A", talla: "M", proceso: "DOBLADO", meta: 50},
+            {estilo: "ESTILO-B", talla: "L", proceso: "SORTEO", meta: 65}
+        ];
+        let contadorCargasPremium = 0;
+        let contadorCargasEficiencia = 0;
+        let deferredPrompt;
+
+        // REGISTRO DE SERVICE WORKER PARA PWA INSTALABLE
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript;charset=utf-8,' + encodeURIComponent(`
+                self.addEventListener('install', e => e.waitUntil(self.skipWaiting()));
+                self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
+            `)).catch(err => console.log('SW Error:', err));
+        }
+
+        // CAPTURA DE EVENTO PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('pwa-install-btn');
+            if (btn) btn.classList.remove('hidden');
+        });
+
+        document.getElementById('pwa-install-btn')?.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    document.getElementById('pwa-install-btn').classList.add('hidden');
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        // AUTENTICACIÓN UNIFICADA (TOKEN + PIN)
+        async function verificarAccesoGeneral() {
+            const tokenInput = document.getElementById('token-input').value.trim();
+            const pinInput = document.getElementById('pin-input').value.trim();
+
+            if(!tokenInput || !pinInput) {
+                return alert("⚠️ Por favor ingresa tu Token y tu PIN de 4 dígitos.");
+            }
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: tokenInput, pin: pinInput })
+                });
+                const data = await res.json();
+
+                if(data.status === 'success') {
+                    currentToken = tokenInput;
+                    currentUser = data.user;
+                    
+                    document.getElementById('lock-screen').style.display = 'none';
+                    document.getElementById('app-home').classList.remove('hidden');
+                    document.getElementById('user-display-name').innerText = currentUser.nombre;
+
+                    if(currentToken === 'angel0301' || currentUser.rol === 'admin') {
+                        document.getElementById('btn-admin-panel').classList.remove('hidden');
+                    }
+
+                    if(data.comunicados && data.comunicados.length > 0) {
+                        mostrarComunicadosModal(data.comunicados);
+                    }
+
+                    cargarMetasDesdeAPI();
+                } else {
+                    alert("❌ Token o PIN incorrecto. Por favor verifica tus credenciales.");
+                }
+            } catch(e) {
+                alert("❌ Error de comunicación con el servidor VEKTOR NEXUS.");
+            }
+        }
+
+        function mostrarComunicadosModal(comunicados) {
+            const body = document.getElementById('comunicado-body');
+            body.innerHTML = '';
+            comunicados.forEach(c => {
+                body.innerHTML += `
+                    <div class="bg-black/60 p-3.5 rounded-xl border border-[#ffe600]/40">
+                        <span class="text-[9px] text-gray-400 font-mono block">${c.fecha}</span>
+                        <h4 class="text-xs font-black text-[#ffe600] uppercase font-orbitron">${c.titulo}</h4>
+                        <p class="text-xs text-gray-200 mt-1">${c.mensaje}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('modal-comunicados').classList.remove('hidden');
+        }
+
+        function cerrarComunicados() {
+            document.getElementById('modal-comunicados').classList.add('hidden');
+        }
+
+        async function emitirComunicado() {
+            const titulo = document.getElementById('com-titulo').value;
+            const mensaje = document.getElementById('com-mensaje').value;
+            if(!titulo || !mensaje) return alert("Por favor completa el título y mensaje del comunicado.");
+
+            const res = await fetch('/api/comunicados/crear', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ titulo, mensaje })
+            });
+            const data = await res.json();
+            if(data.status === 'success') {
+                alert("📢 Comunicado VIP emitido con éxito a todos los usuarios.");
+                document.getElementById('com-titulo').value = '';
+                document.getElementById('com-mensaje').value = '';
+            }
+        }
+
+        function openView(id) {
+            document.getElementById(id).classList.add('active');
+            if(id === 'view-premium' && contadorCargasPremium === 0) {
+                agregarCargaPremium();
+            }
+            if(id === 'view-eficiencia' && contadorCargasEficiencia === 0) {
+                addCarga();
+            }
+        }
+
+        function closeView() { 
+            document.querySelectorAll('.view-window').forEach(v => v.classList.remove('active')); 
+        }
+
+        // --- MÓDULO EFICIENCIA COMPLETA ---
+        function addCarga() {
+            contadorCargasEficiencia++;
+            const list = document.getElementById('cargas-list');
+            const div = document.createElement('div');
+            div.id = `carga-ef-${contadorCargasEficiencia}`;
+            div.className = "glass-panel p-4 rounded-xl border border-[#00f3ff]/30 space-y-3";
+            div.innerHTML = `
+                <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+                    <span class="text-xs font-black font-orbitron text-[#00f3ff]">Carga #${contadorCargasEficiencia}</span>
+                    <button onclick="this.parentElement.parentElement.remove(); calcEficiencia();" class="text-red-400 text-xs font-bold">Quitar</button>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" class="ef-meta input-pro text-center text-xs p-2" placeholder="Meta pza/h" oninput="calcEficiencia()">
+                    <input type="number" class="ef-[#39ff14] ef-docenas input-pro text-center text-xs p-2 text-[#39ff14]" placeholder="Docenas" oninput="calcEficiencia()">
+                </div>
+            `;
+            list.appendChild(div);
+            calcEficiencia();
+        }
+
+        function calcEficiencia() {
+            let totalDocenas = 0;
+            let sumaMetas = 0;
+            let count = 0;
+
+            document.querySelectorAll('#cargas-list > div').forEach(c => {
+                const metaPza = parseFloat(c.querySelector('.ef-meta').value) || 0;
+                const docenas = parseFloat(c.querySelector('.ef-docenas').value) || 0;
+                totalDocenas += docenas;
+                if(metaPza > 0) {
+                    sumaMetas += (metaPza * 11) / 12;
+                    count++;
+                }
+            });
+
+            const metaEfectiva = count > 0 ? (sumaMetas / count) : 0;
+            const eficiencia = metaEfectiva > 0 ? ((totalDocenas / metaEfectiva) * 100) : 0;
+
+            const badge = document.getElementById('ef-badge');
+            const res = document.getElementById('ef-resultado');
+            res.innerText = `${eficiencia.toFixed(2)}%`;
+
+            if(eficiencia >= 100) badge.className = "p-8 rounded-[32px] text-center mb-6 shadow-2xl border-2 transition-all duration-500 bg-emerald-600 border-[#39ff14]";
+            else if(eficiencia >= 85) badge.className = "p-8 rounded-[32px] text-center mb-6 shadow-2xl border-2 transition-all duration-500 bg-cyan-600 border-[#00f3ff]";
+            else if(eficiencia >= 70) badge.className = "p-8 rounded-[32px] text-center mb-6 shadow-2xl border-2 transition-all duration-500 bg-amber-600 border-[#ffe600]";
+            else badge.className = "p-8 rounded-[32px] text-center mb-6 shadow-2xl border-2 transition-all duration-500 bg-red-600 border-red-400";
+        }
+
+        // --- MÓDULO CALCULADORA PREMIUM DB (LÓGICA CORREGIDA) ---
+        function agregarCargaPremium() {
+            contadorCargasPremium++;
+            const container = document.getElementById('contenedor-cargas-premium');
+            const div = document.createElement('div');
+            div.id = `carga-premium-${contadorCargasPremium}`;
+            div.className = "glass-panel p-4 rounded-xl border border-purple-500/30 space-y-3 relative";
+            div.innerHTML = `
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span class="text-xs font-black uppercase font-orbitron text-[#b500ff]">Carga #${contadorCargasPremium}</span>
+                    <button onclick="this.parentElement.parentElement.remove(); calcularMetricasPremium();" class="text-red-400 text-xs font-bold">Quitar</button>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase text-gray-400 mb-1">Meta Estándar (pza/h)</label>
+                        <input type="number" class="premium-meta-input input-pro text-center text-xs p-2 text-yellow-400" value="50" oninput="calcularMetricasPremium()">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase text-gray-400 mb-1">Docenas Hechas</label>
+                        <input type="number" class="premium-docenas-input input-pro text-center text-xs p-2 text-[#39ff14]" value="0" oninput="calcularMetricasPremium()">
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+            calcularMetricasPremium();
+        }
+
+        function calcularMetricasPremium() {
+            let totalDocenasRealizadas = 0;
+            let sumaMetaDocenasProyectadas = 0;
+            let totalCargas = 0;
+
+            const bloquesCarga = document.querySelectorAll('[id^="carga-premium-"]');
+            bloquesCarga.forEach(bloque => {
+                const docenas = parseFloat(bloque.querySelector('.premium-docenas-input').value) || 0;
+                const metaPiezasHora = parseFloat(bloque.querySelector('.premium-meta-input').value) || 0;
+
+                totalDocenasRealizadas += docenas;
+
+                if (metaPiezasHora > 0) {
+                    const metaDocenasDia = (metaPiezasHora * 11) / 12;
+                    sumaMetaDocenasProyectadas += metaDocenasDia;
+                    totalCargas++;
+                }
+            });
+
+            const parosExternosMins = parseFloat(document.getElementById('premium-paros').value) || 0;
+            const metaPromedioProyectada = totalCargas > 0 ? (sumaMetaDocenasProyectadas / totalCargas) : 0;
+            
+            const docenasPerdidasPorParos = (metaPromedioProyectada / 660) * parosExternosMins;
+            const metaFinalEfectiva = Math.max(0, metaPromedioProyectada - docenasPerdidasPorParos);
+
+            const eficienciaStdFinal = metaFinalEfectiva > 0 ? ((totalDocenasRealizadas / metaFinalEfectiva) * 100) : 0;
+
+            document.getElementById('premium-total-docenas').innerText = totalDocenasRealizadas.toFixed(2);
+            document.getElementById('premium-meta-final').innerText = Math.round(metaFinalEfectiva);
+            
+            const res = document.getElementById('premium-eff-std-main');
+            const badge = document.getElementById('premium-badge-resultados');
+            res.innerText = `${eficienciaStdFinal.toFixed(2)}%`;
+
+            if(eficienciaStdFinal >= 100) badge.className = "p-6 rounded-[28px] text-center mb-6 shadow-2xl border-2 transition-all duration-500 bg-emerald-600 border-[#39ff14]";
+            else if(eficienciaStdFinal >= 85) badge.className = "p-6 rounded-[28px] text-center mb-6 shadow-2xl border-2 transition-all duration-500 bg-purple-700 border-[#b500ff]";
+            else badge.className = "p-6 rounded-[28px] text-center mb-6 shadow-2xl border-2 transition-all duration-500 bg-red-600 border-red-400";
+        }
+
+        function calcTiempoSimple() {
+            const meta = parseFloat(document.getElementById('ts-meta').value) || 0;
+            const doc = parseFloat(document.getElementById('ts-doc').value) || 0;
+            if(meta > 0 && doc > 0) {
+                const horas = (doc / meta) * 11;
+                const h = Math.floor(horas);
+                const m = Math.round((horas - h) * 60);
+                document.getElementById('ts-res').innerText = `${h}H ${m}M`;
+            }
+        }
+
+        async function cargarMetasDesdeAPI() {
+            try {
+                const res = await fetch('/api/metas/datos');
+                const data = await res.json();
+                if(data.status === 'success' && data.datos) {
+                    cacheMetasGlobal = data.datos;
+                    renderizarMetasDrive(cacheMetasGlobal);
+                }
+            } catch(e) { console.log('Error de metas:', e); }
+        }
+
+        function renderizarMetasDrive(items) {
+            const container = document.getElementById('lista-metas-drive');
+            container.innerHTML = '';
+            items.forEach(item => {
+                container.innerHTML += `
+                    <div class="glass-card p-3 rounded-xl flex justify-between items-center text-xs">
+                        <div>
+                            <span class="font-black text-[#ffe600] font-orbitron block">${item.estilo} (${item.talla})</span>
+                            <span class="text-[10px] text-gray-300 font-bold">${item.proceso}</span>
+                        </div>
+                        <span class="font-black text-sm text-[#00f3ff] font-orbitron">${item.meta} pza/h</span>
+                    </div>
+                `;
+            });
+        }
+
+        function filtrarMetasDrive() {
+            const q = document.getElementById('busqueda-meta').value.toLowerCase();
+            const filtrados = cacheMetasGlobal.filter(m => 
+                m.estilo.toLowerCase().includes(q) || 
+                m.talla.toLowerCase().includes(q) || 
+                m.proceso.toLowerCase().includes(q)
+            );
+            renderizarMetasDrive(filtrados);
+        }
+
+        async function guardarHistorial(tipo) {
+            if(!currentToken) return alert("Inicia sesión para guardar el historial.");
+            const res = await fetch('/api/historial/guardar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: currentToken, lineas: [`Reporte de ${tipo}`, `Generado el ${new Date().toLocaleString()}`] })
+            });
+            const data = await res.json();
+            if(data.status === 'success') alert(`📂 Registro de ${tipo} guardado con éxito en la carpeta Drive.`);
+        }
+
+        async function crearUsuario() {
+            const nombre = document.getElementById('adm-nombre').value;
+            const contacto = document.getElementById('adm-cont').value;
+            if(!nombre) return alert("Ingresa un nombre para el usuario.");
+
+            const res = await fetch('/api/admin/usuarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, contacto })
+            });
+            const data = await res.json();
+            if(data.status === 'success') {
+                alert(`✅ Usuario Creado:\nToken: ${data.token}\nPIN: ${data.pin}`);
+                document.getElementById('adm-nombre').value = '';
+                document.getElementById('adm-cont').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
