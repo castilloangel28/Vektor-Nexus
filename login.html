@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACCESO - S.I.C.E.P.</title>
+    <title>ACCESO - S.I.C.E.P. (VEKTOR NEXUS)</title>
     <style>
         body {
             background: #0b132b;
@@ -57,7 +57,7 @@
             flex-direction: column; justify-content: center; align-items: center;
             color: #ff4d4d; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px;
         }
-        .hibernacion-screen h1 { font-size: 2.2rem; font-weight: 900; tracking: 2px; margin-bottom: 10px; text-shadow: 0 0 15px rgba(255,77,77,0.6); }
+        .hibernacion-screen h1 { font-size: 2.2rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; text-shadow: 0 0 15px rgba(255,77,77,0.6); }
         .hibernacion-screen p { color: #6c757d; font-size: 1rem; }
     </style>
 </head>
@@ -68,39 +68,59 @@
     </div>
 
     <div class="login-card" id="login-form-wrapper">
-        <h2>Bienvenido</h2>
-        <p>{{ nombre }}</p>
+        <h2>S.I.C.E.P.</h2>
+        <p>VEKTOR NEXUS</p>
         <input type="password" id="pin" placeholder="PIN" maxlength="4" inputmode="numeric">
         <button onclick="validar()">ENTRAR</button>
         <div id="mensaje"></div>
     </div>
 
     <script>
+        // URL oficial de tu backend desplegado en Render
+        const BACKEND_URL = "https://vektor-nexus.onrender.com/api/login";
+
         async function validar() {
             const pin = document.getElementById('pin').value;
             const token = new URLSearchParams(window.location.search).get('token');
             const btn = document.querySelector('button');
             const msg = document.getElementById('mensaje');
 
+            if (!pin || pin.length < 4) {
+                msg.innerText = "INGRESE UN PIN VÁLIDO";
+                return;
+            }
+
             btn.disabled = true;
-            msg.innerText = "Verificando...";
+            msg.innerText = "Verificando con servidor...";
 
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ token: token, pin: pin })
-            });
+            try {
+                const res = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token, pin: pin })
+                });
 
-            if (res.ok) {
-                const data = await res.json();
-                if (data.hibernacion === true) {
-                    document.getElementById('login-form-wrapper').style.display = 'none';
-                    document.getElementById('hibernacion-blocker').style.display = 'flex';
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.hibernacion === true) {
+                        document.getElementById('login-form-wrapper').style.display = 'none';
+                        document.getElementById('hibernacion-blocker').style.display = 'flex';
+                    } else {
+                        msg.style.color = "#5bc0be";
+                        msg.innerText = "ACCESO CONCEDIDO";
+                        setTimeout(() => {
+                            window.location.href = data.redirect_url || "./dashboard.html";
+                        }, 1000);
+                    }
                 } else {
-                    window.location.reload();
+                    msg.style.color = "#ff4d4d";
+                    msg.innerText = "PIN INCORRECTO";
+                    btn.disabled = false;
                 }
-            } else {
-                msg.innerText = "PIN INCORRECTO";
+            } catch (error) {
+                console.error("Error de comunicación:", error);
+                msg.style.color = "#ff4d4d";
+                msg.innerText = "ERROR DE CONEXIÓN CON SERVIDOR";
                 btn.disabled = false;
             }
         }
