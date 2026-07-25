@@ -1,1461 +1,251 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#050814">
-
-    <title>VEKTOR NEXUS - SISTEMA INTEGRADO DE CÁLCULOS Y PRODUCCIÓN</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Orbitron:wght@700;900&display=swap');
-
-        :root {
-            --neon-magenta: #ff007f;
-            --neon-cian: #00f3ff;
-            --neon-verde: #39ff14;
-            --neon-amarillo: #ffe600;
-            --neon-naranja: #ff6c00;
-            --neon-purpura: #b500ff;
-            --bg-deep: #050814;
-            --bg-solid: #0b1120;
-            --bg-input: #111827;
-        }
-
-        body { 
-            background-color: var(--bg-deep);
-            color: #ffffff; 
-            font-family: 'Inter', sans-serif; 
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-
-        .solid-panel { 
-            background: var(--bg-solid);
-            border: 2px solid rgba(255, 255, 255, 0.1); 
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
-        }
-
-        .view-window { 
-            position: fixed;
-            top: 0; left: 100%; width: 100%; height: 100%; 
-            background: var(--bg-deep); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 50; 
-            overflow-y: auto;
-        }
-        .view-window.active { left: 0; }
-
-        .input-pro { 
-            background: var(--bg-input);
-            border: 2px solid #1f2937; 
-            color: white; 
-            border-radius: 12px; 
-            padding: 14px; 
-            width: 100%; 
-            font-weight: bold; 
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        .input-pro:focus { 
-            border-color: var(--neon-cian);
-            box-shadow: 0 0 12px rgba(0, 243, 255, 0.5); 
-        }
-
-        .lion-btn { 
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer; 
-        }
-        .lion-btn:active { transform: scale(0.95); }
-
-        .neon-border-magenta { border: 2px solid var(--neon-magenta); box-shadow: 0 0 15px rgba(255, 0, 127, 0.4); background-color: var(--bg-solid); }
-        .neon-border-magenta:hover { box-shadow: 0 0 25px rgba(255, 0, 127, 0.7); border-color: #ff55aa; }
-
-        .neon-border-cian { border: 2px solid var(--neon-cian); box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); background-color: var(--bg-solid); }
-        .neon-border-cian:hover { box-shadow: 0 0 25px rgba(0, 243, 255, 0.7); border-color: #55f7ff; }
-
-        .neon-border-verde { border: 2px solid var(--neon-verde); box-shadow: 0 0 15px rgba(57, 255, 20, 0.4); background-color: var(--bg-solid); }
-        .neon-border-verde:hover { box-shadow: 0 0 25px rgba(57, 255, 20, 0.7); border-color: #79ff60; }
-
-        .neon-border-amarillo { border: 2px solid var(--neon-amarillo); box-shadow: 0 0 15px rgba(255, 230, 0, 0.4); background-color: var(--bg-solid); }
-        .neon-border-amarillo:hover { box-shadow: 0 0 25px rgba(255, 230, 0, 0.7); border-color: #fff066; }
-
-        .neon-border-naranja { border: 2px solid var(--neon-naranja); box-shadow: 0 0 15px rgba(255, 108, 0, 0.4); background-color: var(--bg-solid); }
-        .neon-border-naranja:hover { box-shadow: 0 0 25px rgba(255, 108, 0, 0.7); border-color: #ff964d; }
-
-        .neon-border-purpura { border: 2px solid var(--neon-purpura); box-shadow: 0 0 15px rgba(181, 0, 255, 0.4); background-color: var(--bg-solid); }
-        .neon-border-purpura:hover { box-shadow: 0 0 25px rgba(181, 0, 255, 0.7); border-color: #d24dff; }
-
-        .checkbox-neon {
-            display: flex;
-            align-items: center;
-            position: relative;
-            padding-left: 35px;
-            cursor: pointer;
-            user-select: none;
-            font-size: 13px;
-            font-weight: bold;
-        }
-        .checkbox-neon input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
-        .checkmark-neon {
-            position: absolute;
-            top: -2px; left: 0; height: 22px; width: 22px;
-            background-color: var(--bg-input); border: 2px solid var(--neon-magenta); border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-        .checkbox-neon:hover input ~ .checkmark-neon { border-color: var(--neon-cian); box-shadow: 0 0 8px rgba(0, 243, 255, 0.6); }
-        .checkbox-neon input:checked ~ .checkmark-neon { background-color: var(--neon-verde); border-color: var(--neon-verde); box-shadow: 0 0 12px rgba(57, 255, 20, 0.8); }
-        .checkmark-neon:after {
-            content: ""; position: absolute; display: none; left: 6px; top: 2px; width: 6px; height: 11px;
-            border: solid #000; border-width: 0 3px 3px 0; transform: rotate(45deg);
-        }
-        .checkbox-neon input:checked ~ .checkmark-neon:after { display: block; }
-
-        .animate-slide-in { animation: slideIn 0.25s ease-out forwards; }
-        @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .switch-container { display: flex; align-items: center; justify-content: space-between; background: #050814; padding: 10px; border-radius: 8px; margin-top: 5px; }
-        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #374151; transition: .3s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
-        input:checked + .slider { background-color: #ff4d4d; box-shadow: 0 0 10px rgba(255,77,77,0.5); }
-        input:checked + .slider:before { transform: translateX(20px); }
-
-        .hibernacion-full-block { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #050814; z-index: 99999; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: #ff4d4d; }
-    </style>
-</head>
-<body class="max-w-md mx-auto relative min-h-screen">
-
-    <!-- Pantalla de bloqueo maestro por hibernación -->
-    <div id="hibernacion-pwa-blocker" class="hibernacion-full-block p-6">
-        <h1 class="text-3xl font-black tracking-widest uppercase mb-4 font-orbitron drop-shadow-[0_0_15px_rgba(255,77,77,0.7)]">SISTEMA Y SERVER<br>EN MODO HIBERNACION</h1>
-        <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Acceso bloqueado de forma remota por Angel Castillo</p>
-    </div>
-
-    <!-- Pantalla de Login con PIN -->
-    <div id="lock-screen" class="min-h-screen flex flex-col justify-center items-center p-6 text-center bg-[#050814] absolute w-full z-50">
-        <div class="solid-panel p-8 rounded-[32px] w-full border-2 border-[#00f3ff] shadow-[0_0_30px_rgba(0,243,255,0.3)]">
-            <span class="text-6xl mb-4 block animate-bounce">🦁</span>
-            <h1 class="text-2xl font-black uppercase tracking-wider font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-[#00f3ff] to-[#39ff14] mb-2">VEKTOR NEXUS</h1>
-            <p class="text-[10px] text-gray-400 mb-6 uppercase tracking-widest font-bold">Sistema Integrado de Cálculos de Eficiencia y Producción</p>
-            <input type="password" id="pin-input" maxlength="4" autocomplete="current-password" class="input-pro text-center text-3xl tracking-[0.5em] mb-6 bg-[#050814]" placeholder="****" aria-label="Código PIN de Seguridad">
-            <button onclick="verificarAcceso()" class="w-full py-4 bg-gradient-to-r from-[#00f3ff] to-[#0088ff] hover:from-[#33f5ff] hover:to-[#339eff] rounded-xl font-black text-white shadow-[0_0_15px_rgba(0,243,255,0.4)] transition-all uppercase tracking-wider">ENTRAR SISTEMA</button>
-        </div>
-    </div>
-
-    <!-- Menú Principal Dashboard -->
-    <div id="app-home" class="hidden p-6 pb-20 bg-[#050814] min-h-screen">
-        <header class="my-6 text-center border-b-2 border-slate-800 pb-6">
-            <h1 class="text-3xl font-black leading-none uppercase tracking-tighter text-white font-orbitron">
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00f3ff] to-[#39ff14]">VEKTOR NEXUS</span>
-            </h1>
-            <p class="text-white text-[11px] font-bold tracking-widest block mt-2 uppercase">Plataforma PWA de Monitoreo & Control</p>
-            <p class="text-[9px] font-black text-gray-500 mt-4 uppercase tracking-widest">Creado y Desarrollado por: <span class="text-[#ffe600] text-[10px] block font-black tracking-normal mt-0.5">Angel Castillo 👑</span></p>
-        </header>
-
-        <div class="text-center mb-6 solid-panel p-4 rounded-xl border border-slate-800">
-            <h2 class="text-sm font-black uppercase text-gray-400">Operador Autorizado:<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#39ff14] to-[#00f3ff] text-xl font-black font-orbitron">{{ user.nombre }}</span></h2>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4" id="main-menu-grid">
-            <div id="btn-menu-biohorario" onclick="openView('view-biohorario')" class="lion-btn solid-panel p-5 rounded-2xl text-center neon-border-magenta col-span-2">
-                <span class="text-3xl block mb-2">⏳</span>
-                <span class="text-xs font-black uppercase text-white tracking-wider">BioHorario Dinámico</span>
-            </div>
-
-            <div id="btn-menu-eficiencia" onclick="openView('view-eficiencia')" class="lion-btn solid-panel p-5 rounded-2xl text-center neon-border-cian">
-                <span class="text-3xl block mb-2">📊</span>
-                <span class="text-[10px] font-black uppercase text-white leading-tight">Eficiencia<br>Completa</span>
-            </div>
-
-            <div id="btn-menu-premium" onclick="intentarAbrirPremium()" class="lion-btn solid-panel p-5 rounded-2xl text-center neon-border-purpura">
-                <span class="text-3xl block mb-2">💎</span>
-                <span class="text-[10px] font-black uppercase text-white leading-tight">Calculadora<br>Premium DB</span>
-            </div>
-
-            <div id="btn-menu-tiempo" onclick="openView('view-tiempo')" class="lion-btn solid-panel p-5 rounded-2xl text-center neon-border-verde">
-                <span class="text-3xl block mb-2">⏱️</span>
-                <span class="text-[10px] font-black uppercase text-white leading-tight">Tiempo por<br>Docenaje</span>
-            </div>
-
-            <div id="btn-menu-metas" onclick="openView('view-metas')" class="lion-btn solid-panel p-5 rounded-2xl text-center neon-border-amarillo">
-                <span class="text-3xl block mb-2">🎯</span>
-                <span class="text-[10px] font-black uppercase text-white leading-tight">Base Metas<br>Drive (.xlsx)</span>
-            </div>
-
-            <div id="btn-menu-historial" onclick="openView('view-historial')" class="lion-btn solid-panel p-5 rounded-2xl text-center neon-border-naranja col-span-2">
-                <span class="text-3xl block mb-2">📂</span>
-                <span class="text-[11px] font-black uppercase text-white leading-tight">Historial Guardado</span>
-            </div>
-
-            {% if token == 'angel0301' or token == 'libny534' or user.rol == 'admin' %}
-            <div onclick="openView('view-admin')" class="lion-btn solid-panel p-6 rounded-2xl text-center col-span-2 border-2 border-[#ffe600] shadow-[0_0_20px_rgba(255,230,0,0.45)]">
-                <span class="text-4xl block mb-2">👑</span>
-                <span class="text-sm font-black font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-[#ffe600] to-[#ff007f] uppercase tracking-wide">PANEL PREMIUM DE MODERADOR</span>
-                <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Exclusivo de Administradores</p>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Módulo BioHorario -->
-    <div id="view-biohorario" class="view-window p-6 bg-[#050814]">
-        <div class="flex items-center mb-8 border-b border-slate-800 pb-4">
-            <button onclick="closeView()" class="text-white font-black text-2xl mr-4 px-3 py-1 bg-gradient-to-r from-[#ff007f] to-[#ff6c00] rounded-xl shadow-[0_0_15px_rgba(255,0,127,0.5)]">←</button>
-            <h2 class="text-xl font-black font-orbitron uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#ff007f] to-[#ff6c00]">BioHorario ⏳</h2>
-        </div>
-
-        <div class="space-y-4">
-            <div id="bio-cargas-list" class="space-y-4"></div>
-            <button onclick="addBioCarga()" class="w-full py-4 bg-[#0b1120] border-2 border-[#ff007f] text-[#ff007f] hover:bg-[#ff007f] hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-[0_0_10px_rgba(255,0,127,0.3)]">+ Añadir Nueva Carga</button>
-
-            <div class="solid-panel p-5 rounded-xl border border-slate-800 mt-6">
-                <h3 class="text-xs font-black text-[#ff6c00] uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">Registros de Tiempos Muertos</h3>
-                <div class="mb-4">
-                    <label class="text-[10px] text-gray-400 font-black uppercase block mb-1">Time Off Recesos</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="number" id="bio-receso-h" min="0" value="0" placeholder="Horas" class="input-pro p-2.5 text-center" oninput="calcularBioHorario()">
-                        <input type="number" id="bio-receso-m" min="0" max="59" value="0" placeholder="Minutos" class="input-pro p-2.5 text-center" oninput="calcularBioHorario()">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="text-[10px] text-gray-400 font-black uppercase block mb-1">Time Off Paros</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="number" id="bio-paro-h" min="0" value="0" placeholder="Horas" class="input-pro p-2.5 text-center" oninput="calcularBioHorario()">
-                        <input type="number" id="bio-paro-m" min="0" max="59" value="0" placeholder="Minutos" class="input-pro p-2.5 text-center" oninput="calcularBioHorario()">
-                    </div>
-                </div>
-            </div>
-
-            <div class="solid-panel p-5 rounded-xl border border-slate-800">
-                <h3 class="text-xs font-black text-[#39ff14] uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">Progreso del Turno Actual</h3>
-                <label class="text-[10px] text-gray-400 font-black uppercase block mb-1">Tiempo Transcurrido Labores</label>
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="number" id="bio-trans-h" min="0" value="0" placeholder="Horas" class="input-pro p-2.5 text-center" oninput="calcularBioHorario()">
-                    <input type="number" id="bio-trans-m" min="0" max="59" value="0" placeholder="Minutos" class="input-pro p-2.5 text-center" oninput="calcularBioHorario()">
-                </div>
-            </div>
-
-            <div class="solid-panel p-6 rounded-2xl border-2 border-[#ffe600] shadow-[0_0_20px_rgba(255,230,0,0.2)] space-y-4">
-                <h3 class="text-center text-xs font-black font-orbitron uppercase tracking-widest text-[#ffe600]">Métricas y Resultados Generales</h3>
-                <div class="grid grid-cols-2 gap-3 text-center">
-                    <div class="bg-[#050814] p-3 rounded-xl border border-slate-800">
-                        <span class="text-[9px] font-bold text-gray-400 uppercase block">Total Docenas</span>
-                        <span id="lbl-bio-total-hecho" class="text-xl font-black text-white">0</span>
-                    </div>
-                    <div class="bg-[#050814] p-3 rounded-xl border border-slate-800">
-                        <span class="text-[9px] font-bold text-gray-400 uppercase block">Meta General (On)</span>
-                        <span id="lbl-bio-meta-gen" class="text-xl font-black text-white">0</span>
-                    </div>
-                    <div class="bg-[#050814] p-3 rounded-xl border border-slate-800">
-                        <span class="text-[9px] font-bold text-gray-400 uppercase block">Docenas Perdidas</span>
-                        <span id="lbl-bio-doc-perdidas" class="text-xl font-black text-[#ff007f]">0</span>
-                    </div>
-                    <div class="bg-[#050814] p-3 rounded-xl border border-slate-800">
-                        <span class="text-[9px] font-bold text-gray-400 uppercase block">Meta Final</span>
-                        <span id="lbl-bio-meta-final" class="text-xl font-black text-[#ffe600]">0</span>
-                    </div>
-                </div>
-
-                <div class="border-t border-slate-800 my-2 pt-3 grid grid-cols-2 gap-3 text-center">
-                    <div class="bg-[#050814] p-3 rounded-xl border border-[#39ff14]/50">
-                        <span class="text-[9px] font-bold text-[#39ff14] uppercase block">Eficiencia ON</span>
-                        <span id="lbl-bio-ef-on" class="text-xl font-black text-[#39ff14] drop-shadow-[0_0_5px_rgba(57,255,20,0.8)]">0.00%</span>
-                    </div>
-                    <div class="bg-[#050814] p-3 rounded-xl border border-[#ff007f]/50">
-                        <span class="text-[9px] font-bold text-[#ff007f] uppercase block">Eficiencia OFF</span>
-                        <span id="lbl-bio-ef-off" class="text-xl font-black text-[#ff007f]">0.00%</span>
-                    </div>
-                </div>
-
-                <div class="bg-[#0b1120] p-4 rounded-xl border border-[#00f3ff]/50 text-center space-y-1 mt-2">
-                    <span class="text-[10px] font-black text-[#00f3ff] uppercase block tracking-wider">Estado Actual a las <span id="lbl-bio-horas-trans">0h 00m</span></span>
-                    <div class="grid grid-cols-2 gap-2 mt-2">
-                        <div>
-                            <span class="text-[9px] font-bold text-gray-400 uppercase block">Meta Actual</span>
-                            <span id="lbl-bio-meta-actual" class="text-xl font-black text-white">0</span>
-                        </div>
-                        <div>
-                            <span class="text-[9px] font-bold text-gray-400 uppercase block">Eficiencia Actual</span>
-                            <span id="lbl-bio-ef-actual" class="text-xl font-black text-[#ff6c00]">0.00%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <button onclick="guardarHistorial('BioHorario')" class="w-full py-4 bg-gradient-to-r from-[#ff007f] to-[#ff6c00] text-white rounded-xl font-black text-sm uppercase tracking-wider shadow-[0_0_15px_rgba(255,108,0,0.5)]">Guardar en Historial Drive</button>
-        </div>
-    </div>
-
-    <!-- Eficiencia Completa -->
-    <div id="view-eficiencia" class="view-window p-6 bg-[#050814]">
-        <div class="flex items-center justify-between mb-8 border-b border-slate-800 pb-4">
-            <div class="flex items-center">
-                <button onclick="closeView()" class="text-black font-black text-2xl mr-4 px-3 py-1 bg-gradient-to-r from-[#00f3ff] to-[#39ff14] rounded-xl shadow-[0_0_15px_rgba(0,243,255,0.5)]">←</button>
-                <div>
-                    <h2 class="text-xl font-black font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-[#00f3ff] to-[#39ff14] uppercase">EFICIENCIA COMPLETA</h2>
-                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1">12 Horas (7 AM - 7 PM)</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="cargas-list" class="space-y-4 mb-4"></div>
-        <button onclick="addCarga()" class="w-full py-4 bg-[#0b1120] border-2 border-dashed border-[#ffe600] text-[#ffe600] rounded-xl text-xs font-black mb-6 hover:bg-[#ffe600] hover:text-black transition-all shadow-[0_0_10px_rgba(255,230,0,0.2)]">+ AÑADIR NUEVA CARGA</button>
-
-        <label for="ef-paros" class="text-[10px] text-[#ffe600] font-black uppercase">Horas de Paro Externo (Automático)</label>
-        <input type="number" id="ef-paros" step="0.01" readonly class="input-pro mt-2 mb-6 bg-[#050814] border-dashed border-[#00f3ff]/50" placeholder="Se calcula automáticamente de tus paros">
-
-        <div id="ef-badge" class="p-8 rounded-[32px] text-center mb-6 shadow-2xl border-2 border-transparent transition-all duration-500 bg-red-600">
-            <div id="ef-resultado" class="text-6xl font-black font-orbitron text-white">0.00%</div>
-            <p class="text-[11px] font-black uppercase mt-2 text-white tracking-widest">Eficiencia Final</p>
-            <div class="flex justify-between border-t border-white/20 pt-4 mt-4">
-                <div class="text-left">
-                    <p class="text-[10px] font-black uppercase text-gray-200">Meta Final Día</p>
-                    <p id="ui-meta" class="text-2xl font-black font-orbitron text-white">0</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-[10px] font-black uppercase text-gray-200">Total Docenas</p>
-                    <p id="ui-hecho" class="text-2xl font-black font-orbitron text-white">0</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="tiempos-cargas" class="mb-6 space-y-2"></div>
-
-        <button onclick="guardarHistorial('Eficiencia')" class="w-full py-4 bg-gradient-to-r from-[#00f3ff] to-[#39ff14] text-black rounded-xl font-black text-sm uppercase tracking-wider shadow-[0_0_15px_rgba(57,255,20,0.5)]">Guardar en Historial Drive</button>
-    </div>
-
-    <!-- Calculadora Premium -->
-    <div id="view-premium" class="view-window p-6 bg-[#050814]">
-        <div class="flex items-center justify-between mb-8 border-b border-slate-800 pb-4">
-            <div class="flex items-center">
-                <button onclick="closeView()" class="text-white font-black text-2xl mr-4 px-3 py-1 bg-gradient-to-r from-[#b500ff] to-[#ff007f] rounded-xl shadow-[0_0_15px_rgba(181,0,255,0.5)]">←</button>
-                <div>
-                    <h2 class="text-xl font-black font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-[#b500ff] to-[#ff007f] uppercase">CALCULADORA PREMIUM</h2>
-                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1">Conexión DB Drive + Cuadre Exacto</p>
-                </div>
-            </div>
-            <button onclick="recargarDatosPremium()" class="bg-[#111827] border border-[#b500ff] text-[#b500ff] p-2 rounded-lg text-[10px] font-bold uppercase hover:bg-[#b500ff] hover:text-white transition-all shadow-[0_0_10px_rgba(181,0,255,0.3)]">
-                Sync
-            </button>
-        </div>
-
-        <div class="solid-panel p-4 rounded-xl border border-slate-800 mb-6 grid grid-cols-2 gap-4">
-            <div>
-                <label for="premium-paros" class="block text-[10px] font-black uppercase text-gray-400 tracking-wider mb-2">Paros Externos (Mins)</label>
-                <input type="number" id="premium-paros" value="0" oninput="calcularMetricasPremium()" class="input-pro text-red-400 font-bold text-center text-lg p-2 focus:border-red-500">
-            </div>
-            <div class="flex items-end">
-                <button onclick="agregarCargaPremium()" class="w-full bg-gradient-to-r from-[#b500ff] to-[#ff007f] text-white font-black p-3 rounded-xl text-xs uppercase tracking-wider shadow-[0_0_15px_rgba(181,0,255,0.4)] transition-all">
-                    + Añadir Carga
-                </button>
-            </div>
-        </div>
-
-        <div id="contenedor-cargas-premium" class="space-y-4 mb-6"></div>
-
-        <div id="premium-badge-resultados" class="p-6 rounded-[24px] text-center mb-6 shadow-2xl border-2 transition-all duration-500 bg-red-600">
-            <span class="text-[10px] uppercase font-black text-white tracking-widest mb-1 block">Eficiencia Premium STD</span>
-            <div id="premium-eff-std-main" class="text-5xl font-black font-orbitron text-white">0.00%</div>
-
-            <div class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-white/20">
-                <div class="text-center">
-                    <span class="text-[9px] uppercase font-black text-gray-200 block">Meta Día Total</span>
-                    <span id="premium-meta-final" class="text-xl font-black font-orbitron text-white">0</span>
-                </div>
-                <div class="text-center">
-                    <span class="text-[9px] uppercase font-black text-gray-200 block">Total Docenas</span>
-                    <span id="premium-total-docenas" class="text-xl font-black font-orbitron text-white">0</span>
-                </div>
-            </div>
-        </div>
-
-        <div id="premium-tiempos-cargas" class="mb-6 space-y-2"></div>
-
-        <button onclick="guardarHistorial('Premium')" class="w-full py-4 bg-gradient-to-r from-[#b500ff] to-[#ff007f] text-white rounded-xl font-black text-sm uppercase tracking-wider shadow-[0_0_15px_rgba(181,0,255,0.5)]">Guardar Cálculo Premium</button>
-    </div>
-
-    <!-- Tiempo Simple -->
-    <div id="view-tiempo" class="view-window p-6 bg-[#050814]"> 
-        <div class="flex items-center mb-8 border-b border-slate-800 pb-4">
-            <button onclick="closeView()" class="text-black font-black text-2xl mr-4 px-3 py-1 bg-gradient-to-r from-[#39ff14] to-[#00f3ff] rounded-xl shadow-[0_0_15px_rgba(57,255,20,0.5)]">←</button>
-            <h2 class="text-xl font-black font-orbitron uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#39ff14] to-[#00f3ff]">Tiempo Simple ⏱️</h2>
-        </div>
-        <div class="space-y-6">
-            <div class="solid-panel p-6 rounded-2xl border border-[#39ff14]/50 shadow-[0_0_15px_rgba(57,255,20,0.2)]">
-                <h3 class="text-sm font-black mb-4 text-white uppercase text-center border-b border-slate-800 pb-2">Tiempo al 100% Eficiencia</h3>
-                <label for="ts-meta" class="text-[10px] text-[#ffe600] font-black uppercase">Meta de la Carga (Total 11h)</label>
-                <input type="number" id="ts-meta" oninput="calcTiempoSimple()" class="input-pro mt-2 mb-4" placeholder="Ej: 550">
-
-                <label for="ts-doc" class="text-[10px] text-[#ffe600] font-black uppercase">Docenaje de Carga Actual</label>
-                <input type="number" id="ts-doc" oninput="calcTiempoSimple()" class="input-pro mt-2" placeholder="Ej: 100">
-            </div>
-
-            <div class="bg-gradient-to-r from-[#0b1120] to-[#111827] p-8 rounded-[32px] text-center shadow-[0_0_20px_rgba(57,255,20,0.3)] border-2 border-[#39ff14]/60">
-                <p class="text-[10px] font-black uppercase mb-2 text-gray-300">Tiempo Estimado al 100%</p>
-                <div id="ts-res" class="text-5xl font-black font-orbitron text-[#39ff14] text-shadow-md drop-shadow-[0_0_8px_rgba(57,255,20,0.8)]">0H 00M</div>
-                <div id="ts-ritmo" class="text-[11px] mt-4 font-black bg-[#050814] border border-slate-800 py-2 rounded-lg text-[#ffe600]">Ritmo: 0.00 doc/hr</div>
-            </div>
-
-            <div class="solid-panel p-6 rounded-2xl border border-[#ff6c00]/50 mt-8 shadow-[0_0_15px_rgba(255,108,0,0.2)]">
-                <h3 class="text-sm font-black mb-4 text-[#ff6c00] uppercase text-center border-b border-slate-800 pb-2">Simulador de Ritmo (%) 🚀</h3>
-                <label for="tp-meta" class="text-[10px] text-[#ffe600] font-black uppercase">Meta Total de Carga (11h)</label>
-                <input type="number" id="tp-meta" oninput="calcTiempoPorcentaje()" class="input-pro mt-2 mb-4" placeholder="Ej: 550">
-
-                <label for="tp-doc" class="text-[10px] text-[#ffe600] font-black uppercase">Docenas a Realizar</label>
-                <input type="number" id="tp-doc" oninput="calcTiempoPorcentaje()" class="input-pro mt-2 mb-4" placeholder="Ej: 100">
-
-                <label for="tp-porc" class="text-[10px] text-[#39ff14] font-black uppercase">Porcentaje de Eficiencia Deseado (%)</label>
-                <input type="number" id="tp-porc" oninput="calcTiempoPorcentaje()" class="input-pro mt-2 border-[#39ff14]/60 text-[#39ff14]" placeholder="Ej: 50, 100, 200">
-
-                <div class="bg-[#050814] p-4 rounded-xl text-center mt-6 border border-slate-800">
-                    <p class="text-[9px] font-black uppercase mb-1 text-gray-400">Tiempo Requerido a este ritmo:</p>
-                    <div id="tp-res-tiempo" class="text-3xl font-black font-orbitron text-white tracking-widest">0H 00M</div>
-                    <p id="tp-res-ritmo" class="text-[10px] font-bold mt-2 text-[#39ff14] uppercase">Debes sacar: 0.00 doc/hr</p>
-                </div>
-            </div>
-            <button onclick="guardarHistorial('Tiempo Simple')" class="w-full py-4 bg-gradient-to-r from-[#ffe600] to-[#ff6c00] text-black rounded-xl font-black uppercase text-sm shadow-[0_0_15px_rgba(255,230,0,0.4)]">Guardar Cálculo 100%</button>
-        </div>
-    </div>
-
-    <!-- Base Metas Drive -->
-    <div id="view-metas" class="view-window p-6 bg-[#050814]">
-        <div class="flex items-center mb-8 border-b border-slate-800 pb-4">
-            <button onclick="closeView()" class="text-black font-black text-2xl mr-4 px-3 py-1 bg-gradient-to-r from-[#ffe600] to-[#ff6c00] rounded-xl shadow-[0_0_15px_rgba(255,230,0,0.5)]">←</button>
-            <h2 class="text-xl font-black font-orbitron uppercase text-transparent bg-clip-text bg-gradient-to-r from-[#ffe600] to-[#ff6c00]">Base Metas DB 🎯</h2>
-        </div>
-
-        <div class="space-y-6">
-            <div class="solid-panel p-6 rounded-3xl border border-[#ffe600]/50 shadow-[0_0_15px_rgba(255,230,0,0.2)]">
-                <p class="text-xs text-gray-400 mb-4 font-bold uppercase tracking-wide">Filtro de Extracción Manual (Drive Excel):</p>
-                <label for="sel-estilo" class="text-[10px] text-[#ffe600] font-black uppercase">1. Estilo</label>
-                <select id="sel-estilo" class="input-pro mt-2 mb-4" onchange="actualizarBusquedaMeta()">
-                    <option value="">(Presione Sincronizar DB abajo)</option>
-                </select>
-                <label class="text-[10px] text-[#ffe600] font-black uppercase">2. Talla</label>
-                <select id="sel-talla" class="input-pro mt-2 mb-4" onchange="actualizarBusquedaMeta()">
-                    <option value="">Seleccione una talla</option>
-                    <option value="XXS">XXS</option>
-                    <option value="XS">XS</option>
-                    <option value="S">S</option>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                    <option value="2X">2X</option>
-                    <option value="3X">3X</option>
-                    <option value="4X">4X</option>
-                </select>
-                <label for="sel-proceso" class="text-[10px] text-[#ffe600] font-black uppercase">3. Proceso</label>
-                <select id="sel-proceso" class="input-pro mt-2 mb-4" onchange="actualizarBusquedaMeta()">
-                    <option value="">(Presione Sincronizar DB abajo)</option>
-                </select>
-            </div>
-            <div id="meta-resultado-box" class="bg-gradient-to-r from-[#0b1120] to-[#111827] p-8 rounded-[32px] text-center shadow-[0_0_20px_rgba(0,243,255,0.2)] border-2 border-[#00f3ff]/50 transition-all duration-300">
-                <p class="text-[10px] font-black uppercase mb-2 text-gray-300 tracking-widest">LA META ESTÁNDAR ES:</p>
-                <div id="meta-valor" class="text-5xl font-black font-orbitron text-[#00f3ff] drop-shadow-[0_0_8px_rgba(0,243,255,0.8)]">---</div>
-                <p id="meta-status" class="text-[11px] mt-4 font-black bg-[#050814] border border-slate-800 py-2 rounded-xl text-[#ffe600]">Esperando selección...</p>
-            </div>
-            <button onclick="sincronizarPDF()" class="w-full py-4 bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white rounded-2xl font-black uppercase text-xs flex items-center justify-center gap-2 border border-gray-500 shadow-md transition-all">
-                <span>🔄</span> Sincronizar DB (.xlsx) Drive
-            </button>
-        </div>
-    </div>
-
-    <!-- Historial de Cálculos -->
-    <div id="view-historial" class="view-window p-6 bg-[#050814]">
-        <div class="flex items-center mb-8 border-b border-slate-800 pb-4">
-            <button onclick="closeView()" class="text-black font-black text-2xl mr-4 px-3 py-1 bg-gradient-to-r from-[#ff6c00] to-[#ffe600] rounded-xl shadow-[0_0_15px_rgba(255,108,0,0.5)]">←</button>
-            <h2 class="text-xl font-black font-orbitron text-white uppercase tracking-tight">HISTORIAL DRIVE 📂</h2>
-        </div>
-        <div id="historial-content" class="space-y-4"></div>
-    </div>
-
-    <!-- Panel Moderador Admin -->
-    <div id="view-admin" class="view-window p-6 bg-[#050814]">
-        <div class="flex items-center mb-8 border-b border-slate-800 pb-4">
-            <button onclick="closeView()" class="text-black font-black text-2xl mr-4 px-3 py-1 bg-gradient-to-r from-[#ffe600] to-[#ff007f] rounded-xl shadow-[0_0_25px_rgba(255,230,0,0.6)]">←</button>
-            <h2 class="text-xl font-black font-orbitron text-[#ffe600] uppercase tracking-wide">MODERADOR 👑</h2>
-        </div>
-        <div class="solid-panel p-6 rounded-2xl mb-8 border-2 border-[#ff007f] shadow-[0_0_25px_rgba(255,0,127,0.2)]">
-            <h3 class="text-sm font-black mb-4 text-white uppercase tracking-wider">Crear Nuevo Operador</h3>
-            <input type="text" id="adm-nombre" placeholder="Nombre (Ej: Juan Perez)" class="input-pro mb-3" aria-label="Nombre del Operador">
-            <input type="text" id="adm-cont" placeholder="Teléfono o Correo" class="input-pro mb-4" aria-label="Contacto del Operador">
-            <button onclick="crearUsuario()" class="w-full py-4 bg-gradient-to-r from-[#ff007f] to-[#ff6c00] text-white rounded-xl font-black uppercase shadow-[0_0_15px_rgba(255,0,127,0.4)] transition-all">Generar Acceso y Link</button>
-        </div>
-        <div class="solid-panel p-5 rounded-2xl mb-8 border-2 border-[#00f3ff] shadow-[0_0_25px_rgba(0,243,255,0.2)] animate-slide-in">
-            <h3 class="text-sm font-black mb-1 text-transparent bg-clip-text bg-gradient-to-r from-[#00f3ff] to-[#39ff14] uppercase">⚡ Matriz de Accesos Premium</h3>
-            <p class="text-[9px] text-gray-400 font-bold uppercase mb-4">Gestiona las opciones del menú por operador</p>
-            <label for="permisos-user-select" class="text-[10px] text-[#ffe600] font-black uppercase block mb-2">Seleccionar Operador:</label>
-            <select id="permisos-user-select" class="input-pro mb-4 bg-[#050814]" onchange="cambioUsuarioEnSelectorPermisos()">
-                <option value="">-- Selecciona un Operador creado --</option>
-            </select>
-            <div class="grid grid-cols-1 gap-3 bg-[#050814] p-4 rounded-xl border border-slate-800">
-                <label class="checkbox-neon text-gray-300">⏳ Módulo BioHorario<input type="checkbox" id="permiso-biohorario" value="biohorario" checked><span class="checkmark-neon"></span></label>
-                <label class="checkbox-neon text-gray-300">📊 Eficiencias (Completa/Premium)<input type="checkbox" id="permiso-eficiencia" value="eficiencia" checked><span class="checkmark-neon"></span></label>
-                <label class="checkbox-neon text-gray-300">⏱️ Tiempo por Docenaje<input type="checkbox" id="permiso-tiempo" value="tiempo" checked><span class="checkmark-neon"></span></label>
-                <label class="checkbox-neon text-gray-300">🎯 Base Metas Drive (.xlsx)<input type="checkbox" id="permiso-metas" value="metas" checked><span class="checkmark-neon"></span></label>
-                <label class="checkbox-neon text-gray-300">📂 Historial Guardado<input type="checkbox" id="permiso-historial" value="historial" checked><span class="checkmark-neon"></span></label>
-            </div>
-
-            <div class="mt-4 border-t border-slate-800 pt-3">
-                <span class="text-[11px] font-black uppercase tracking-wider text-red-400 block mb-2">🛑 Interruptor Maestro de Hibernación</span>
-                <div class="switch-container">
-                    <span class="text-[10px] font-bold text-gray-400 uppercase">Estado Hibernación del Operador:</span>
-                    <label class="switch">
-                        <input type="checkbox" id="hibernacion-toggle" onchange="toggleHibernacionUsuario()">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <button onclick="guardarPermisosMenu()" class="w-full mt-4 py-3 bg-gradient-to-r from-[#39ff14] to-teal-600 font-black text-black text-xs rounded-xl uppercase shadow-[0_0_15px_rgba(57,255,20,0.4)] transition-all">💾 Guardar Permisos</button>
-        </div>
-        <div id="admin-users-list" class="space-y-3"></div>
-    </div>
-
-    <!-- CONTROLADORES Y LÓGICA JAVASCRIPT REFACTORIZADA -->
-    <script>
-        const PIN_CORRECTO = "{{ user.pin }}";
-        const MI_TOKEN = "{{ token }}";
-        const USER_ROL = "{{ user.rol }}";
-
-        let listaPermisosUsuariosLocal = {};
-        let pdfDataCache = [];
-        let cacheEstilos = [];
-        let cacheTallas = ['XXS', 'XS', 'S', 'M', 'L', 'XL', '2X', '3X', '4X'];
-        let cacheProcesos = [];
-        let cacheMetasGlobal = [];
-        let contadorCargasPremium = 0;
-
-        async function verificarAcceso() {
-            const pinInput = document.getElementById('pin-input').value;
-            if(!pinInput) return alert("⚠️ Ingresa tu PIN de seguridad.");
-
-            let deviceId = localStorage.getItem('app_device_id');
-            if(!deviceId) {
-                deviceId = 'DEV_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
-                localStorage.setItem('app_device_id', deviceId);
-            }
-
-            const btn = document.querySelector('button[onclick="verificarAcceso()"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'VALIDANDO SISTEMA...';
-            btn.disabled = true;
-
-            try {
-                const res = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: MI_TOKEN, pin: pinInput, device_id: deviceId })
-                });
-
-                const data = await res.json();
-                if (data.hibernacion === true) {
-                    document.getElementById('lock-screen').style.display = 'none';
-                    document.getElementById('app-home').style.display = 'none';
-                    document.getElementById('hibernacion-pwa-blocker').style.display = 'flex';
-                    return;
-                }
-
-                if(data.status === 'success') {
-                    document.getElementById('lock-screen').style.display = 'none';
-                    document.getElementById('app-home').classList.remove('hidden');
-                    if (typeof aplicarFiltroMenuUsuarioLogueado === "function") aplicarFiltroMenuUsuarioLogueado();
-                    descargarBaseMetasSilencioso(); 
-                } else {
-                    alert("❌ " + (data.message || "Error al autenticar con el servidor."));
-                }
-            } catch(e) {
-                alert("❌ Error de comunicación con el servidor maestro VEKTOR.");
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        function intentarAbrirPremium() {
-            const token = MI_TOKEN;
-            const contactoUsuario = "{{ user.contacto }}"; 
-
-            let pinValido = "0000";
-            if (contactoUsuario && contactoUsuario.length >= 4) {
-                pinValido = contactoUsuario.slice(-4);
-            }
-
-            const pinCode = prompt("INTRODUCE TU ACCESO VIP (Últimos 4 dígitos de contacto o clave maestra)");
-            if (pinCode === pinValido || token === 'angel0301' || token === 'libny534' || USER_ROL === 'admin') {
-                openView('view-premium');
-            } else if (pinCode !== null) {
-                alert("❌ Código incorrecto. Acceso denegado a Calculadora Premium.");
-            }
-        }
-
-        function aplicarFiltroMenuUsuarioLogueado() {
-            const nombreActual = "{{ user.nombre }}".toLowerCase();
-            const esUsuarioVIP = nombreActual.includes("angel castillo") || nombreActual.includes("karina cabrera") || MI_TOKEN === 'angel0301' || MI_TOKEN === 'libny534' || USER_ROL === 'admin';
-
-            const guardados = localStorage.getItem('app_permisos_menu');
-            if(guardados) listaPermisosUsuariosLocal = JSON.parse(guardados);
-            if(listaPermisosUsuariosLocal[MI_TOKEN]) {
-                const config = listaPermisosUsuariosLocal[MI_TOKEN];
-                document.getElementById('btn-menu-biohorario').style.display = (config.biohorario && esUsuarioVIP) ? 'block' : 'none';
-                document.getElementById('btn-menu-eficiencia').style.display = config.eficiencia ? 'block' : 'none';
-                document.getElementById('btn-menu-premium').style.display = config.eficiencia ? 'block' : 'none';
-                document.getElementById('btn-menu-tiempo').style.display = config.tiempo ? 'block' : 'none';
-                document.getElementById('btn-menu-metas').style.display = config.metas ? 'block' : 'none';
-                document.getElementById('btn-menu-historial').style.display = config.historial ? 'block' : 'none';
-            } else {
-                document.getElementById('btn-menu-biohorario').style.display = esUsuarioVIP ? 'block' : 'none';
-            }
-        }
-
-        async function openView(id) {
-            document.getElementById(id).classList.add('active');
-            if(id === 'view-admin') fetchAdminUsers();
-            if(id === 'view-historial') fetchHistorial();
-            if(id === 'view-metas' && pdfDataCache.length === 0) cargarOpcionesMetas();
-            if(id === 'view-premium' && contadorCargasPremium === 0) {
-                if(cacheMetasGlobal.length === 0) {
-                    await descargarBaseMetasSilencioso();
-                }
-                agregarCargaPremium();
-            }
-        }
-
-        function closeView() { 
-            document.querySelectorAll('.view-window').forEach(v => v.classList.remove('active')); 
-        }
-
-        function formatTime(hoursDecimal) {
-            const h = Math.floor(hoursDecimal);
-            const m = Math.round((hoursDecimal - h) * 60);
-            return `${h}H ${m < 10 ? '0'+m : m}M`;
-        }
-
-        function formatClock(totalMinutes) {
-            let h = Math.floor(totalMinutes / 60) % 24;
-            let m = Math.round(totalMinutes % 60);
-            if (m === 60) { h++; m = 0; h = h % 24; }
-            let ampm = h >= 12 ? 'PM' : 'AM';
-            let displayH = h % 12;
-            if (displayH === 0) displayH = 12;
-            return `${displayH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
-        }
-
-        function calcularFinConRecesos(inicio, duracionReal) {
-            let actual = inicio;
-            let restante = duracionReal;
-            let recesosAtravesados = [];
-
-            let fixedBreaks = [
-                { s: 490, e: 505, name: "RECESO 8:10 AM - 8:25 AM", dur: 15 },
-                { s: 680, e: 710, name: "ALMUERZO 11:20 AM - 11:50 AM", dur: 30 },
-                { s: 910, e: 925, name: "RECESO 3:10 PM - 3:25 PM", dur: 15 }
-            ];
-            while(restante > 0) {
-                let nextBreak = fixedBreaks.find(b => b.s >= actual && b.s < actual + restante);
-                if (nextBreak) {
-                    let timeBeforeBreak = nextBreak.s - actual;
-                    restante -= timeBeforeBreak;
-                    actual = nextBreak.e;
-                    recesosAtravesados.push(nextBreak);
-                } else {
-                    actual += restante;
-                    restante = 0;
-                }
-            }
-            return { fin: actual, recesos: recesosAtravesados };
-        }
-
-        function generarHTMLTimeline(cargas, totalDocenasGeneral, esPremium = false) {
-            let containerId = esPremium ? 'premium-tiempos-cargas' : 'tiempos-cargas';
-            const splitContainer = document.getElementById(containerId);
-            if (!splitContainer) return;
-            splitContainer.innerHTML = '';
-
-            let currentMinutes = 420; // 7:00 AM
-
-            cargas.forEach((carga, i) => {
-                if(carga.duracionAsignadaMins <= 0) return;
-
-                let loadStartMins = currentMinutes;
-                let result = calcularFinConRecesos(loadStartMins, carga.duracionAsignadaMins);
-                let endMinutes = result.fin;
-
-                let startStr = formatClock(loadStartMins);
-                let endStr = formatClock(endMinutes);
-
-                splitContainer.innerHTML += `
-                    <div class="solid-panel p-3 rounded-xl border border-slate-800 space-y-1 shadow-md">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-black text-gray-400">CARGA ${i+1}</span>
-                            <span class="text-sm font-black font-orbitron text-[#00f3ff]">${startStr} - ${endStr} <span class="text-[10px] text-gray-500 font-sans font-bold">(${formatTime(carga.duracionAsignadaMins/60)})</span></span>
-                        </div>
-                    </div>`;
-
-                if (result.recesos.length > 0) {
-                    result.recesos.forEach(rec => {
-                        splitContainer.innerHTML += `
-                            <div class="flex justify-between items-center bg-[#ffe600]/10 px-3 py-2 rounded-lg border border-[#ffe600]/30 ml-4 my-1 shadow-[0_0_10px_rgba(255,230,0,0.1)]">
-                                <span class="text-[10px] font-bold text-[#ffe600]">↳ PARO FIJO: ${rec.name}</span>
-                                <span class="text-[11px] font-mono font-black text-white">${formatClock(rec.s)} - ${formatClock(rec.e)} <span class="text-[#39ff14] italic">(${rec.dur} min)</span></span>
-                            </div>`;
-                    });
-                }
-
-                if (carga.parosUser && carga.parosUser.length > 0) {
-                    carga.parosUser.forEach(p => {
-                        let colorBorder = p.isOutside ? 'border-red-500/30' : 'border-[#00f3ff]/30';
-                        let colorText = p.isOutside ? 'text-red-400' : 'text-[#00f3ff]';
-                        let timeRangeStr = (p.realStartStr && p.realStartStr !== "N/A") ? `${p.realStartStr} - ${p.realEndStr} ` : '';
-                        splitContainer.innerHTML += `
-                            <div class="flex justify-between items-center bg-slate-900 px-3 py-1.5 rounded-lg border ${colorBorder} ml-4 my-1">
-                                <span class="text-[9px] font-bold ${colorText}">↳ MAN. ${p.motivo}</span>
-                                <span class="text-[10px] font-mono text-gray-400 font-bold">${timeRangeStr}(${p.durationMins}m)</span>
-                            </div>`;
-                    });
-                }
-
-                currentMinutes = endMinutes;
-            });
-
-            let tiempoOnMins = 660; 
-            let tiempoOffMins = 60; 
-
-            splitContainer.innerHTML += `
-                <div class="grid grid-cols-2 gap-2 mt-4 border-t border-slate-800 pt-3">
-                    <div class="bg-[#050814] p-3 rounded-xl text-center border border-[#39ff14]/30 shadow-md">
-                        <span class="text-[9px] font-black text-[#39ff14] uppercase block mb-1">Tiempo Producción Puro</span>
-                        <span class="text-sm font-black font-orbitron text-white">${formatTime(tiempoOnMins/60)}</span>
-                    </div>
-                    <div class="bg-[#050814] p-3 rounded-xl text-center border border-[#ffe600]/30 shadow-md">
-                        <span class="text-[9px] font-black text-[#ffe600] uppercase block mb-1">Recesos Obligatorios</span>
-                        <span class="text-sm font-black font-orbitron text-white">${formatTime(tiempoOffMins/60)}</span>
-                    </div>
-                </div>`;
-        }
-
-        function addCarga() {
-            const container = document.getElementById('cargas-list');
-            const numCarga = container.children.length + 1;
-
-            const div = document.createElement('div');
-            div.className = "solid-panel p-4 rounded-xl border border-[#00f3ff]/40 space-y-3 animate-slide-in relative shadow-[0_0_15px_rgba(0,0,0,0.5)]";
-            div.innerHTML = `
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <span class="text-xs font-black font-orbitron text-[#00f3ff] uppercase">CARGA ${numCarga}</span>
-                    <button type="button" onclick="this.parentElement.parentElement.remove(); calcularEficienciaCompleta();" class="text-red-500 text-xs font-bold hover:text-red-400">Eliminar</button>
-                </div>
-                <div class="flex gap-2">
-                    <input type="number" placeholder="META" class="input-pro c-meta text-[#39ff14]" oninput="calcularEficienciaCompleta()" aria-label="Meta Carga ${numCarga}">
-                    <input type="number" placeholder="HECHO" class="input-pro c-hecho text-cyan-400" oninput="calcularEficienciaCompleta()" aria-label="Hecho Carga ${numCarga}">
-                </div>
-                <div class="paros-container space-y-2"></div>
-                <button type="button" onclick="addParoToCarga(this)" class="w-full py-2 bg-[#050814] border border-[#00f3ff]/30 rounded-lg text-[10px] font-black text-[#00f3ff] uppercase tracking-wider hover:bg-slate-900 transition-all">
-                    + Añadir Paro Manual a Carga ${numCarga}
-                </button>
-            `;
-            container.appendChild(div);
-            calcularEficienciaCompleta();
-        }
-
-        function addParoToCarga(btn) {
-            const parosContainer = btn.previousElementSibling;
-            const div = document.createElement('div');
-            div.className = "flex flex-wrap gap-2 bg-[#0b1120] p-2.5 rounded-lg items-center text-xs border border-slate-800 animate-slide-in";
-            let hoursOpts = '';
-            for(let h=0; h<24; h++) {
-                let dH = h%12;
-                if(dH===0) dH=12;
-                hoursOpts += `<option value="${h}">${(dH<10?'0':'')+dH} ${h>=12?'PM':'AM'}</option>`;
-            }
-            let minsOpts = '';
-            for(let m=0; m<60; m++) minsOpts += `<option value="${m}">${(m<10?'0':'')+m}</option>`;
-
-            div.innerHTML = `
-                <div class="flex flex-col gap-1">
-                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-tighter">Inicio</span>
-                    <div class="flex items-center bg-[#050814] px-1 rounded border border-slate-800">
-                        <select class="bg-transparent text-white py-1 outline-none p-start-h" onchange="calcularEficienciaCompleta()">${hoursOpts}</select>
-                        <span class="text-gray-600 px-0.5">:</span>
-                        <select class="bg-transparent text-white py-1 outline-none p-start-m" onchange="calcularEficienciaCompleta()">${minsOpts}</select>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-1">
-                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-tighter">Fin</span>
-                    <div class="flex items-center bg-[#050814] px-1 rounded border border-slate-800">
-                        <select class="bg-transparent text-white py-1 outline-none p-end-h" onchange="calcularEficienciaCompleta()">${hoursOpts}</select>
-                        <span class="text-gray-600 px-0.5">:</span>
-                        <select class="bg-transparent text-white py-1 outline-none p-end-m" onchange="calcularEficienciaCompleta()">${minsOpts}</select>
-                    </div>
-                </div>
-                <div class="flex flex-col flex-1 min-w-[100px] gap-1">
-                    <span class="text-[9px] font-black text-[#ffe600] uppercase tracking-tighter">Motivo</span>
-                    <select class="bg-[#050814] border border-[#ffe600]/40 text-[#ffe600] font-bold p-1 rounded outline-none p-motivo" onchange="calcularEficienciaCompleta()">
-                        <option value="A">A (Falta De Trabajo)</option>
-                        <option value="B">B (Falta De Energia)</option>
-                        <option value="D">D (Falta De Troco)</option>
-                        <option value="E">E (Revision Rechazos)</option>
-                        <option value="G">G (No Programado)</option>
-                        <option value="H">H (Pruebas)</option>
-                        <option value="I">I (Asignación)</option>
-                    </select>
-                </div>
-                <button type="button" onclick="this.parentElement.remove(); calcularEficienciaCompleta();" class="text-red-500 font-black text-base pt-3 px-1">✕</button>
-            `;
-            parosContainer.appendChild(div);
-            div.querySelector('.p-start-h').value = "7";
-            div.querySelector('.p-end-h').value = "7";
-            calcularEficienciaCompleta();
-        }
-
-        function calcularEficienciaCompleta() {
-            const cargaBlocks = document.querySelectorAll('#cargas-list > div');
-            let sumMeta = 0, sumHecho = 0, count = 0;
-            let totalManualOutsideMins = 0;
-            let cargasData = [];
-
-            cargaBlocks.forEach((block, i) => {
-                const metaVal = parseFloat(block.querySelector('.c-meta')?.value) || 0;
-                const hechoVal = parseFloat(block.querySelector('.c-hecho')?.value) || 0;
-
-                let loadManualOutside = 0;
-                let parosList = [];
-
-                block.querySelectorAll('.paros-container > div').forEach(row => {
-                    const startTotal = (parseInt(row.querySelector('.p-start-h').value)||0)*60 + (parseInt(row.querySelector('.p-start-m').value)||0);
-                    const endTotal = (parseInt(row.querySelector('.p-end-h').value)||0)*60 + (parseInt(row.querySelector('.p-end-m').value)||0);
-                    const motivo = row.querySelector('.p-motivo').value;
-                    let duration = endTotal - startTotal;
-                    if(duration < 0) duration = 0;
-
-                    loadManualOutside += duration;
-                    totalManualOutsideMins += duration;
-                    parosList.push({
-                        motivo, durationMins: duration, isOutside: true,
-                        realStartStr: formatClock(startTotal), realEndStr: formatClock(endTotal)
-                    });
-                });
-
-                if(metaVal > 0) { 
-                    sumMeta += metaVal;
-                    sumHecho += hechoVal; 
-                    count++; 
-                }
-
-                cargasData.push({ metaVal, hechoVal, parosUser: parosList, manualOutside: loadManualOutside });
-            });
-
-            document.getElementById('ef-paros').value = (totalManualOutsideMins / 60).toFixed(2);
-
-            const tiempoCargaStandard = 660; 
-            const tiempoTrabajadoNeto = tiempoCargaStandard - totalManualOutsideMins;
-            const mGen = count > 0 ? (sumMeta / count) : 0; 
-            const docenasPerdidasParos = (mGen / 660) * totalManualOutsideMins; 
-            const metaFinalDiaDia = Math.max(0, Math.round(mGen - docenasPerdidasParos));
-            let effStd = metaFinalDiaDia > 0 ? ((sumHecho / metaFinalDiaDia) * 100) : 0; 
-
-            document.getElementById('ui-meta').innerText = metaFinalDiaDia;
-            document.getElementById('ui-hecho').innerText = sumHecho;
-            document.getElementById('ef-resultado').innerText = effStd.toFixed(2) + "%";
-
-            let sumaEficiencias = 0;
-            cargasData.forEach(c => {
-                c.eficienciaIndividual = (c.metaVal > 0) ? (c.hechoVal / c.metaVal) : 0;
-                sumaEficiencias += c.eficienciaIndividual;
-            });
-
-            let cargasProporcionales = cargasData.map(c => {
-                let minsProduccion = 0;
-                if (sumaEficiencias > 0) {
-                    minsProduccion = Math.round((tiempoTrabajadoNeto * c.eficienciaIndividual) / sumaEficiencias);
-                }
-                let duracionTotal = minsProduccion + c.manualOutside;
-                return { duracionAsignadaMins: duracionTotal, parosUser: c.parosUser };
-            });
-
-            let agendaSuma = cargasProporcionales.reduce((acc, c) => acc + c.duracionAsignadaMins, 0);
-            let diff = tiempoCargaStandard - agendaSuma;
-            if (cargasProporcionales.length > 0 && diff !== 0) {
-                let lastValido = [...cargasProporcionales].reverse().find(c => c.duracionAsignadaMins > 0);
-                if (lastValido) { lastValido.duracionAsignadaMins += diff; }
-            }
-
-            generarHTMLTimeline(cargasProporcionales, sumHecho, false);
-
-            let colorClass = "bg-red-600 text-white";
-            if (effStd >= 100) colorClass = "bg-gradient-to-r from-teal-600 to-[#00f3ff] text-black border-[#00f3ff]/50 shadow-[0_0_20px_rgba(0,243,255,0.6)]";
-            else if (effStd >= 95) colorClass = "bg-[#023e8a] text-white"; 
-            else if (effStd >= 85) colorClass = "bg-[#39ff14] text-black shadow-[0_0_20px_rgba(57,255,20,0.6)]";
-            else if (effStd >= 75) colorClass = "bg-[#ffe600] text-black shadow-[0_0_20px_rgba(255,230,0,0.6)]"; 
-            else if (effStd >= 65) colorClass = "bg-[#ff6c00] text-white";
-            document.getElementById('ef-badge').className = `p-8 rounded-[32px] text-center mb-6 shadow-2xl border-2 transition-all duration-500 ${colorClass}`;
-        }
-
-        function actualizarCachesGlobales(data) {
-            if (data && data.status === 'success') {
-                cacheMetasGlobal = data.datos || [];
-                pdfDataCache = data.datos || [];
-                cacheEstilos = data.estilos || [];
-                cacheProcesos = data.procesos || [];
-                if (data.tallas && data.tallas.length > 0) {
-                    cacheTallas = data.tallas;
-                }
-            }
-        }
-
-        function descargarBaseMetasSilencioso() {
-            return fetch('/api/metas/datos')
-            .then(res => res.json())
-            .then(data => {
-                actualizarCachesGlobales(data);
-            }).catch(e => console.error("Error descarga silenciosa metas:", e));
-        }
-
-        function recargarDatosPremium() {
-            fetch('/api/metas/sincronizar', { method: 'POST' })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    actualizarCachesGlobales(data);
-                    document.querySelectorAll('.premium-estilo-select').forEach(sel => {
-                        const val = sel.value; 
-                        llenarSelector(sel, cacheEstilos, "Estilo"); 
-                        sel.value = val;
-                    });
-                    document.querySelectorAll('.premium-talla-select').forEach(sel => {
-                        const val = sel.value; 
-                        llenarSelector(sel, cacheTallas, "Talla"); 
-                        sel.value = val;
-                    });
-                    document.querySelectorAll('.premium-proceso-select').forEach(sel => {
-                        const val = sel.value; 
-                        llenarSelector(sel, cacheProcesos, "Proceso"); 
-                        sel.value = val;
-                    });
-                    alert(" Base Metas Premium sincronizada con Google Drive.");
-                    calcularMetricasPremium();
-                }
-            }).catch(e => alert("Error al sincronizar datos Premium con servidor."));
-        }
-
-        function llenarSelector(el, arr, placeholder) {
-            el.innerHTML = `<option value="">-- ${placeholder} --</option>`;
-            if (arr && arr.length > 0) {
-                [...arr].sort().forEach(i => el.innerHTML += `<option value="${i}">${i}</option>`);
-            }
-        }
-
-        function agregarCargaPremium() {
-            contadorCargasPremium++;
-            const container = document.getElementById('contenedor-cargas-premium');
-            const div = document.createElement('div');
-            div.id = `carga-premium-${contadorCargasPremium}`;
-            div.className = "solid-panel p-4 rounded-xl border border-purple-500/30 space-y-3 relative animate-slide-in";
-            div.innerHTML = `
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <span class="text-xs font-black uppercase font-orbitron text-[#b500ff]">Carga #${contadorCargasPremium}</span>
-                    <button onclick="eliminarCargaPremium(${contadorCargasPremium})" class="text-red-500 hover:text-red-400 text-xs font-bold"> Quitar</button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <div>
-                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Estilo</label>
-                        <select onchange="actualizarMetaCargaPremium(${contadorCargasPremium})" class="premium-estilo-select input-pro p-2 text-xs text-white focus:border-[#b500ff]"></select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Talla</label>
-                        <select onchange="actualizarMetaCargaPremium(${contadorCargasPremium})" class="premium-talla-select input-pro p-2 text-xs text-cyan-400 focus:border-[#b500ff]"></select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Proceso</label>
-                        <select onchange="actualizarMetaCargaPremium(${contadorCargasPremium})" class="premium-proceso-select input-pro p-2 text-xs text-[#b500ff] focus:border-[#b500ff]"></select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-1">Docenas Hechas</label>
-                        <input type="number" value="0" oninput="calcularMetricasPremium()" class="premium-docenas-input input-pro p-1.5 text-center text-[#39ff14] focus:border-[#39ff14]">
-                    </div>
-                </div>
-                <div class="flex justify-between items-center text-[11px] bg-[#050814] p-2.5 rounded-lg border border-slate-800">
-                    <span class="text-gray-400 font-bold">Meta Vinculada Drive:</span>
-                    <span id="premium-meta-carga-${contadorCargasPremium}" data-meta-value="0" class="font-black font-orbitron text-yellow-400 text-sm drop-shadow-md">0 pza/h</span>
-                </div>
-            `;
-            container.appendChild(div);
-
-            llenarSelector(div.querySelector('.premium-estilo-select'), cacheEstilos, "Estilo");
-            llenarSelector(div.querySelector('.premium-talla-select'), cacheTallas, "Talla");
-            llenarSelector(div.querySelector('.premium-proceso-select'), cacheProcesos, "Proceso");
-        }
-
-        function eliminarCargaPremium(id) {
-            const el = document.getElementById(`carga-premium-${id}`);
-            if (el) { el.remove(); calcularMetricasPremium(); }
-        }
-
-        function actualizarMetaCargaPremium(id) {
-            const el = document.getElementById(`carga-premium-${id}`);
-            if (!el) return;
-
-            const est = el.querySelector('.premium-estilo-select').value;
-            const tal = el.querySelector('.premium-talla-select').value;
-            const pro = el.querySelector('.premium-proceso-select').value;
-            const md = document.getElementById(`premium-meta-carga-${id}`);
-            if (!md) return;
-
-            if (!est || !tal || !pro) {
-                md.innerText = "0 pza/h";
-                md.dataset.metaValue = "0"; calcularMetricasPremium(); return;
-            }
-
-            const match = cacheMetasGlobal.find(m => m.estilo === est && m.talla === tal && m.proceso === pro);
-            if (match) {
-                md.innerText = `${match.meta} pza/h`;
-                md.dataset.metaValue = match.meta;
-            } else {
-                md.innerText = "No encontrada";
-                md.dataset.metaValue = "0";
-            }
-            calcularMetricasPremium();
-        }
-
-        function calcularMetricasPremium() {
-            let totalDocenas = 0;
-            let sumaMetaCargaDocenas = 0;
-            let contadorCargasValidas = 0;
-            let cargasData = [];
-
-            const bloquesCarga = document.querySelectorAll('[id^="carga-premium-"]');
-            bloquesCarga.forEach(bloque => {
-                const idStr = bloque.id.split('-')[2];
-                const docenasVal = parseFloat(bloque.querySelector('.premium-docenas-input').value) || 0;
-                const metaContainer = document.getElementById(`premium-meta-carga-${idStr}`);
-                const metaPzaHora = metaContainer ? (parseFloat(metaContainer.dataset.metaValue) || 0) : 0;
-
-                totalDocenas += docenasVal;
-
-                let metaCargaDocenas = 0;
-                if (metaPzaHora > 0) {
-                    metaCargaDocenas = (metaPzaHora * 11) / 12;
-                    sumaMetaCargaDocenas += metaCargaDocenas;
-                    contadorCargasValidas++;
-                }
-                cargasData.push({ hechoVal: docenasVal, metaCargaDocenas: metaCargaDocenas });
-            });
-
-            const tiempoCargaStandard = 660; 
-            const parosExternosMins = parseFloat(document.getElementById('premium-paros').value) || 0;
-
-            const mGen = contadorCargasValidas > 0 ? (sumaMetaCargaDocenas / contadorCargasValidas) : 0;
-            const docenasPerdidasPorParos = (mGen / 660) * parosExternosMins;
-            const metaEfectiva = Math.max(0, mGen - docenasPerdidasPorParos); 
-
-            let effStd = metaEfectiva > 0 ? ((totalDocenas / metaEfectiva) * 100) : 0;
-
-            document.getElementById('premium-total-docenas').innerText = totalDocenas.toFixed(2);
-            document.getElementById('premium-eff-std-main').innerText = `${effStd.toFixed(2)}%`;
-            document.getElementById('premium-meta-final').innerText = Math.round(metaEfectiva);
-
-            let sumaEficiencias = 0;
-            cargasData.forEach(c => {
-                c.eficienciaIndividual = (c.metaCargaDocenas > 0) ? (c.hechoVal / c.metaCargaDocenas) : 0;
-                sumaEficiencias += c.eficienciaIndividual;
-            });
-
-            const tiempoTrabajadoNeto = tiempoCargaStandard - parosExternosMins;
-
-            let cargasProporcionales = cargasData.map(c => {
-                let minsProduccion = 0;
-                let loadParo = (cargasData.length > 0) ? (parosExternosMins / cargasData.length) : 0;
-                if (sumaEficiencias > 0) {
-                    minsProduccion = Math.round((tiempoTrabajadoNeto * c.eficienciaIndividual) / sumaEficiencias);
-                } else if (cargasData.length > 0) {
-                    minsProduccion = Math.round(tiempoTrabajadoNeto / cargasData.length);
-                }
-                let duracionTotal = minsProduccion + loadParo;
-
-                let parosUserList = [];
-                if (loadParo > 0) {
-                    parosUserList.push({
-                        motivo: "Paro Externo",
-                        durationMins: Math.round(loadParo),
-                        isOutside: true,
-                        realStartStr: "N/A",
-                        realEndStr: "N/A"
-                    });
-                }
-                return { duracionAsignadaMins: duracionTotal, parosUser: parosUserList }; 
-            });
-
-            let agendaSuma = cargasProporcionales.reduce((acc, c) => acc + c.duracionAsignadaMins, 0);
-            let diff = tiempoCargaStandard - agendaSuma;
-
-            if (cargasProporcionales.length > 0 && diff !== 0) {
-                let lastValid = [...cargasProporcionales].reverse().find(c => c.duracionAsignadaMins > 0) || cargasProporcionales[cargasProporcionales.length - 1];
-                if (lastValid) {
-                    lastValid.duracionAsignadaMins += diff;
-                }
-            }
-
-            generarHTMLTimeline(cargasProporcionales, totalDocenas, true);
-
-            let colorClass = "bg-red-600 border-red-500 shadow-[0_0_20px_rgba(220,38,38,0.5)]"; 
-            if (effStd >= 100) colorClass = "bg-[#b500ff] border-[#ff007f] shadow-[0_0_25px_rgba(181,0,255,0.6)]";
-            else if (effStd >= 95) colorClass = "bg-[#0088ff] border-[#00f3ff] shadow-[0_0_15px_rgba(0,136,255,0.5)]"; 
-            else if (effStd >= 85) colorClass = "bg-[#118822] border-[#39ff14] shadow-[0_0_15px_rgba(57,255,20,0.5)]";
-            else if (effStd >= 75) colorClass = "bg-[#ffe600] text-black border-[#ffe600]/50 shadow-[0_0_15px_rgba(255,230,0,0.5)]";
-            else if (effStd >= 65) colorClass = "bg-[#ff6c00] text-white";
-
-            const badge = document.getElementById('premium-badge-resultados');
-            if(badge) badge.className = `p-6 rounded-[24px] text-center mb-6 shadow-2xl border-2 transition-all duration-500 ${colorClass}`;
-        }
-
-        function addBioCarga() {
-            const container = document.getElementById('bio-cargas-list');
-            const numCarga = container.children.length + 1;
-            const div = document.createElement('div');
-            div.className = "solid-panel p-4 rounded-xl border border-slate-800 space-y-3 relative animate-slide-in shadow-md";
-            div.innerHTML = `
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <span class="text-xs font-black text-[#ff007f] uppercase font-orbitron">Carga ${numCarga}</span>
-                    <button type="button" onclick="this.parentElement.parentElement.remove(); calcularBioHorario();" class="text-red-500 text-xs font-bold hover:text-red-400">Eliminar</button>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="text-[9px] text-gray-400 font-bold uppercase block mb-1">Meta Carga ${numCarga}</label>
-                        <input type="number" class="input-pro p-2.5 text-center text-[#ffe600] bio-meta-input" oninput="calcularBioHorario()">
-                    </div>
-                    <div>
-                        <label class="text-[9px] text-gray-400 font-bold uppercase block mb-1">Docenas Hechas</label>
-                        <input type="number" class="input-pro p-2.5 text-center text-[#ff007f] bio-hecho-input" oninput="calcularBioHorario()">
-                    </div>
-                </div>
-            `;
-            container.appendChild(div);
-            calcularBioHorario();
-        }
-
-        function calcularBioHorario() {
-            const cargas = document.querySelectorAll('#bio-cargas-list > div');
-            let totalDocenasHechas = 0, sumaMetas = 0, cantidadMetas = 0;
-            cargas.forEach(b => {
-                const mV = parseFloat(b.querySelector('.bio-meta-input').value) || 0;
-                const hV = parseFloat(b.querySelector('.bio-hecho-input').value) || 0;
-                totalDocenasHechas += hV;
-                if(mV > 0) { sumaMetas += mV; cantidadMetas++; }
-            });
-            const metaGeneralOn = cantidadMetas > 0 ? (sumaMetas / cantidadMetas) : 0;
-            const recH = parseFloat(document.getElementById('bio-receso-h').value) || 0;
-            const recM = parseFloat(document.getElementById('bio-receso-m').value) || 0;
-            const parH = parseFloat(document.getElementById('bio-paro-h').value) || 0;
-            const parM = parseFloat(document.getElementById('bio-paro-m').value) || 0;
-            const totalMinutosParos = (parH * 60) + parM;
-
-            const docenasPerdidasParos = (metaGeneralOn / 11) * (totalMinutosParos / 60);
-            const metaFinal = metaGeneralOn - docenasPerdidasParos;
-
-            const eficienciaOn = metaGeneralOn > 0 ? (totalDocenasHechas / metaGeneralOn) * 100 : 0;
-            const eficienciaOff = metaGeneralOn > 0 ? (docenasPerdidasParos / metaGeneralOn) * 100 : 0;
-
-            const tH = parseFloat(document.getElementById('bio-trans-h').value) || 0;
-            const tM = parseFloat(document.getElementById('bio-trans-m').value) || 0;
-
-            let minutosPuros = (tH * 60) + tM;
-            if(minutosPuros >= 85) minutosPuros -= 15;
-            else if(minutosPuros > 70) minutosPuros -= (minutosPuros - 70);
-            if(minutosPuros >= 290) minutosPuros -= 30;
-            else if(minutosPuros > 260) minutosPuros -= (minutosPuros - 260);
-            if(minutosPuros >= 505) minutosPuros -= 15;
-            else if(minutosPuros > 490) minutosPuros -= (minutosPuros - 490);
-
-            const horasTranscurridasDec = minutosPuros / 60;
-            const metaActual = (metaFinal / 11) * horasTranscurridasDec;
-            const eficienciaActual = metaActual > 0 ? (totalDocenasHechas / metaActual) * 100 : 0;
-
-            document.getElementById('lbl-bio-total-hecho').innerText = totalDocenasHechas;
-            document.getElementById('lbl-bio-meta-gen').innerText = metaGeneralOn.toFixed(1);
-            document.getElementById('lbl-bio-doc-perdidas').innerText = docenasPerdidasParos.toFixed(1);
-            document.getElementById('lbl-bio-meta-final').innerText = metaFinal.toFixed(1);
-            document.getElementById('lbl-bio-ef-on').innerText = eficienciaOn.toFixed(2) + "%";
-            document.getElementById('lbl-bio-ef-off').innerText = eficienciaOff.toFixed(2) + "%";
-            document.getElementById('lbl-bio-horas-trans').innerText = `${tH}h ${(tM<10?'0':'')+tM}m`;
-            document.getElementById('lbl-bio-meta-actual').innerText = metaActual.toFixed(1);
-            document.getElementById('lbl-bio-ef-actual').innerText = eficienciaActual.toFixed(2) + "%";
-        }
-
-        function calcTiempoSimple() {
-            const meta = parseFloat(document.getElementById('ts-meta').value) || 0;
-            const doc = parseFloat(document.getElementById('ts-doc').value) || 0;
-            if(meta > 0) {
-                const docHora = meta / 11;
-                document.getElementById('ts-res').innerText = formatTime(doc / docHora);
-                document.getElementById('ts-ritmo').innerText = `Ritmo: ${docHora.toFixed(2)} doc/hr`;
-            } else {
-                document.getElementById('ts-res').innerText = "0H 00M";
-                document.getElementById('ts-ritmo').innerText = `Ritmo: 0.00 doc/hr`;
-            }
-        }
-
-        function calcTiempoPorcentaje() {
-            const meta = parseFloat(document.getElementById('tp-meta').value) || 0;
-            const docenas = parseFloat(document.getElementById('tp-doc').value) || 0;
-            const porcentaje = parseFloat(document.getElementById('tp-porc').value) || 0;
-            if (meta > 0 && docenas > 0 && porcentaje > 0) {
-                const reqHora = (meta / 11) * (porcentaje / 100);
-                document.getElementById('tp-res-tiempo').innerText = formatTime(docenas / reqHora);
-                document.getElementById('tp-res-ritmo').innerText = `Debes sacar: ${reqHora.toFixed(2)} doc/hr`;
-            } else {
-                document.getElementById('tp-res-tiempo').innerText = "0H 00M";
-                document.getElementById('tp-res-ritmo').innerText = `Debes sacar: 0.00 doc/hr`;
-            }
-        }
-
-        function sincronizarPDF() {
-            const btn = document.querySelector('button[onclick="sincronizarPDF()"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<span>⏳</span> Descargando DB...'; btn.disabled = true;
-            fetch('/api/metas/sincronizar', { method: 'POST' })
-            .then(res => res.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    actualizarCachesGlobales(data);
-                    poblarSelectoresMetas(data.estilos, data.procesos); 
-                    alert("✅ Base de Datos sincronizada desde archivos Excel de Google Drive.");
-                } else alert("❌ Error DB: " + data.message);
-            }).catch(e => alert("❌ Error de conexión al sincronizar DB.")).finally(() => { btn.innerHTML = originalText; btn.disabled = false; });
-        }
-
-        function cargarOpcionesMetas() {
-            fetch('/api/metas/datos').then(res => res.json()).then(data => {
-                if(data.status === 'success' && data.estilos && data.estilos.length > 0) {
-                    actualizarCachesGlobales(data);
-                    poblarSelectoresMetas(data.estilos, data.procesos);
-                }
-            }).catch(e => console.error("Error al cargar metas:", e));
-        }
-
-        function poblarSelectoresMetas(est, proc) {
-            const se = document.getElementById('sel-estilo');
-            const sp = document.getElementById('sel-proceso');
-            if(se && est) { se.innerHTML = '<option value="">-- Estilo --</option>'; [...est].sort().forEach(e => se.innerHTML += `<option value="${e}">${e}</option>`); }
-            if(sp && proc) { sp.innerHTML = '<option value="">-- Proceso --</option>'; [...proc].sort().forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`); }
-        }
-
-        function actualizarBusquedaMeta() {
-            const e = document.getElementById('sel-estilo').value;
-            const t = document.getElementById('sel-talla').value; 
-            const p = document.getElementById('sel-proceso').value;
-            const vDiv = document.getElementById('meta-valor'); 
-            const sDiv = document.getElementById('meta-status');
-
-            if(!e || !t || !p) { vDiv.innerText = "---"; sDiv.innerText = "Esperando selección..."; return; }
-            const match = pdfDataCache.find(d => d.estilo === e && d.talla === t && d.proceso === p);
-            if(match) { vDiv.innerText = match.meta; sDiv.innerText = "¡Meta encontrada!"; } 
-            else { vDiv.innerText = "N/A"; sDiv.innerText = "No se encontró registro para este combo"; }
-        }
-
-        async function guardarHistorial(tipo) {
-            let info = {};
-            let extenso = false;
-            let lineas = [];
-
-            if(tipo === 'Eficiencia') {
-                extenso = true;
-                info = { 
-                    res: document.getElementById('ef-resultado').innerText, 
-                    detalle: document.getElementById('tiempos-cargas').innerText.replace(/\n/g, ' | ') 
-                };
-                lineas = [
-                    f"Eficiencia Final: {info.res}",
-                    f"Meta Día Total: {document.getElementById('ui-meta').innerText}",
-                    f"Total Docenas Hechas: {document.getElementById('ui-hecho').innerText}",
-                    f"Desglose de Tiempos: {info.detalle}"
-                ];
-            } else if(tipo === 'BioHorario') {
-                info = { 
-                    res: "ON: " + document.getElementById('lbl-bio-ef-on').innerText + " | ACT: " + document.getElementById('lbl-bio-ef-actual').innerText, 
-                    detalle: `Total Docenas: ${document.getElementById('lbl-bio-total-hecho').innerText}` 
-                };
-                lineas = [f"Resumen BioHorario: {info.res}", info.detalle];
-            } else if (tipo === 'Premium') {
-                extenso = true;
-                info = { 
-                    res: document.getElementById('premium-eff-std-main').innerText, 
-                    detalle: document.getElementById('premium-tiempos-cargas').innerText.replace(/\n/g, ' | ') 
-                };
-                lineas = [
-                    f"Eficiencia Premium STD: {info.res}",
-                    f"Meta Día: {document.getElementById('premium-meta-final').innerText}",
-                    f"Total Docenas: {document.getElementById('premium-total-docenas').innerText}",
-                    f"Detalle Tiempos: {info.detalle}"
-                ];
-            } else {
-                info = { 
-                    res: document.getElementById('ts-res').innerText, 
-                    meta: document.getElementById('ts-meta').value 
-                };
-                lineas = [f"Tiempo Simple Estimado: {info.res}", f"Meta Utilizada: {info.meta}"];
-            }
-
-            try {
-                // Endpoint dual con respaldo directo en /api/historial/guardar
-                const response = await fetch('/api/historial/guardar', { 
-                    method: 'POST', 
-                    headers: {'Content-Type': 'application/json'}, 
-                    body: JSON.stringify({ token: MI_TOKEN, tipo, info, extenso, lineas }) 
-                });
-                const data = await response.json();
-                if (data.status === 'success' || data.success === true) {
-                    alert("💾 Cálculo guardado e impreso en tu carpeta personal de Google Drive.");
-                } else {
-                    alert("❌ Error al guardar: " + (data.message || "La API no devolvió confirmación."));
-                }
-            } catch(e) {
-                alert("Error de comunicación con el servidor al intentar guardar.");
-            }
-        }
-
-        async function fetchHistorial() {
-            const cont = document.getElementById('historial-content');
-            cont.innerHTML = '<p class="text-center text-cyan-400 mt-10 font-bold animate-pulse">Obteniendo archivos de Google Drive...</p>';
-            try {
-                // Endpoint unificado para sincronizar historial
-                const res = await fetch(`/api/historial/archivos?token=${MI_TOKEN}`);
-                if (!res.ok) throw new Error("Fallo al obtener archivos");
-                const data = await res.json();
-                
-                if(!data || data.length === 0) { 
-                    cont.innerHTML = '<p class="text-center text-gray-500 mt-10 uppercase font-bold">No existen reportes guardados en la carpeta de Drive.</p>'; 
-                    return; 
-                }
-
-                cont.innerHTML = [...data].reverse().map(i => `
-                    <div class="solid-panel p-4 rounded-xl border-l-4 border-[#ffe600] mb-3 shadow-lg hover:border-[#00f3ff] transition-all">
-                        <div class="flex justify-between text-[10px] mb-2 font-black text-gray-400 uppercase">
-                            <span class="text-[#ffe600]">${i.tipo || 'Reporte'}</span>
-                            <span>${i.fecha_hora || ''}</span>
-                        </div>
-                        ${i.usuario ? `<div class="text-[10px] text-[#00f3ff] mb-2 font-bold">Operador: ${i.usuario}</div>` : ''}
-                        <div class="text-xl font-black font-orbitron text-white mb-1">${i.info.res || 'Cálculo'}</div>
-                        ${i.info.detalle ? `<div class="text-[9px] text-gray-400 mb-2">${i.info.detalle}</div>` : ''}
-                        ${i.drive_url ? `<a href="${i.drive_url}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-[10px] text-teal-400 hover:text-teal-300 font-black uppercase tracking-wider mt-2 bg-[#050814] px-3 py-1.5 rounded-lg border border-teal-500/30">
-                            <span>📂</span> Ver Documento en Google Drive
-                        </a>` : ''}
-                    </div>
-                `).join('');
-            } catch(e) {
-                cont.innerHTML = '<p class="text-center text-red-500 mt-10 font-bold uppercase">Error al conectar con la base de datos de historial.</p>';
-            }
-        }
-
-        async function fetchAdminUsers() {
-            const list = document.getElementById('admin-users-list');
-            const select = document.getElementById('permisos-user-select');
-            list.innerHTML = '<p class="text-center text-gray-400 text-xs">Cargando usuarios...</p>';
-
-            try {
-                const res = await fetch('/api/admin/usuarios');
-                const users = await res.json();
-
-                list.innerHTML = '';
-                select.innerHTML = '<option value="">-- Selecciona un Operador creado --</option>';
-
-                Object.keys(users).forEach(token => {
-                    const u = users[token];
-                    select.innerHTML += `<option value="${token}">${u.nombre} (${token})</option>`;
-
-                    list.innerHTML += `
-                        <div class="solid-panel p-3 rounded-xl border border-slate-800 text-xs flex justify-between items-center">
-                            <div>
-                                <div class="font-bold text-white">${u.nombre}</div>
-                                <div class="text-[10px] text-gray-400">PIN: <span class="text-[#39ff14]">${u.pin}</span> | Token: ${token}</div>
-                            </div>
-                            <span class="px-2 py-1 text-[9px] font-black rounded uppercase ${u.hibernado ? 'bg-red-900 text-red-300' : 'bg-teal-900 text-teal-300'}">
-                                ${u.hibernado ? 'Hibernado' : 'Activo'}
-                            </span>
-                        </div>
-                    `;
-                });
-            } catch(e) {
-                list.innerHTML = '<p class="text-center text-red-500 text-xs">Error al obtener usuarios.</p>';
-            }
-        }
-
-        async function crearUsuario() {
-            const nombre = document.getElementById('adm-nombre').value;
-            const contacto = document.getElementById('adm-cont').value;
-            if(!nombre) return alert("Ingresa el nombre del operador.");
-
-            try {
-                const res = await fetch('/api/admin/usuarios', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ nombre, contacto })
-                });
-                const data = await res.json();
-                if(data.status === 'success') {
-                    alert(`✅ Operador Creado:\nToken: ${data.token}\nPIN: ${data.pin}\n\nEnlace generado:\n${window.location.origin}/?token=${data.token}`);
-                    document.getElementById('adm-nombre').value = '';
-                    document.getElementById('adm-cont').value = '';
-                    fetchAdminUsers();
-                } else alert("Error: " + data.message);
-            } catch(e) { alert("Error al guardar operador."); }
-        }
-
-        function cambioUsuarioEnSelectorPermisos() {
-            const selToken = document.getElementById('permisos-user-select').value;
-            if(!selToken) return;
-
-            fetch('/api/admin/usuarios')
-            .then(r => r.json())
-            .then(users => {
-                if(users[selToken]) {
-                    const u = users[selToken];
-                    const p = u.permisos || {};
-                    document.getElementById('permiso-biohorario').checked = p.biohorario !== false;
-                    document.getElementById('permiso-eficiencia').checked = p.eficiencia !== false;
-                    document.getElementById('permiso-tiempo').checked = p.tiempo !== false;
-                    document.getElementById('permiso-metas').checked = p.metas !== false;
-                    document.getElementById('permiso-historial').checked = p.historial !== false;
-                    document.getElementById('hibernacion-toggle').checked = u.hibernado === true;
-                }
-            });
-        }
-
-        async function toggleHibernacionUsuario() {
-            const selToken = document.getElementById('permisos-user-select').value;
-            if(!selToken) return;
-
-            const isHibernated = document.getElementById('hibernacion-toggle').checked;
-            try {
-                await fetch('/api/admin/usuarios', {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ token: selToken, hibernar: isHibernated })
-                });
-            } catch(e) { console.error("Error cambiando estado hibernación", e); }
-        }
-
-        function guardarPermisosMenu() {
-            const selToken = document.getElementById('permisos-user-select').value;
-            if(!selToken) return alert("Selecciona un operador.");
-
-            const permisos = {
-                biohorario: document.getElementById('permiso-biohorario').checked,
-                eficiencia: document.getElementById('permiso-eficiencia').checked,
-                tiempo: document.getElementById('permiso-tiempo').checked,
-                metas: document.getElementById('permiso-metas').checked,
-                historial: document.getElementById('permiso-historial').checked
-            };
-
-            listaPermisosUsuariosLocal[selToken] = permisos;
-            localStorage.setItem('app_permisos_menu', JSON.stringify(listaPermisosUsuariosLocal));
-            alert("💾 Permisos guardados localmente y sincronizados.");
-        }
-    </script>
-</body>
-</html>
+<!-- ========================================== -->
+<!-- MÓDULO CALCULADORA PREMIUM - DRAGON BALL NEON -->
+<!-- ========================================== -->
+<style>
+  :root {
+    --neon-blue: #00f3ff;
+    --neon-red: #ff003c;
+    --dark-bg: #050505;
+  }
+
+  body.dbz-theme {
+    background-color: var(--dark-bg);
+    /* Fondo en línea de Goku UI Neon */
+    background-image: linear-gradient(rgba(5, 5, 5, 0.85), rgba(5, 5, 5, 0.85)), url('https://images3.alphacoders.com/132/1329241.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #ffffff;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cyber-panel {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid var(--neon-blue);
+    box-shadow: 0 0 15px var(--neon-blue), inset 0 0 15px var(--neon-blue);
+    border-radius: 10px;
+    padding: 30px;
+    width: 100%;
+    max-width: 450px;
+    margin-bottom: 20px;
+    text-align: center;
+    backdrop-filter: blur(5px);
+  }
+
+  .cyber-panel.rojo {
+    border-color: var(--neon-red);
+    box-shadow: 0 0 15px var(--neon-red), inset 0 0 15px var(--neon-red);
+  }
+
+  h2 {
+    text-transform: uppercase;
+    text-shadow: 0 0 8px var(--neon-blue);
+    margin-bottom: 20px;
+  }
+
+  .cyber-panel.rojo h2 {
+    text-shadow: 0 0 8px var(--neon-red);
+  }
+
+  .cyber-input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    background: transparent;
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    font-size: 16px;
+    outline: none;
+    box-shadow: 0 0 5px var(--neon-blue);
+  }
+  
+  .cyber-panel.rojo .cyber-input {
+    border-color: var(--neon-red);
+    color: #fff;
+    box-shadow: 0 0 5px var(--neon-red);
+  }
+
+  .cyber-btn {
+    background: transparent;
+    color: #fff;
+    border: 2px solid var(--neon-blue);
+    padding: 12px 25px;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    text-shadow: 0 0 5px var(--neon-blue);
+    box-shadow: 0 0 10px var(--neon-blue);
+    margin-top: 15px;
+  }
+
+  .cyber-btn:hover {
+    background: var(--neon-blue);
+    color: #000;
+    box-shadow: 0 0 20px var(--neon-blue);
+  }
+
+  .cyber-panel.rojo .cyber-btn {
+    border-color: var(--neon-red);
+    text-shadow: 0 0 5px var(--neon-red);
+    box-shadow: 0 0 10px var(--neon-red);
+  }
+
+  .cyber-panel.rojo .cyber-btn:hover {
+    background: var(--neon-red);
+    box-shadow: 0 0 20px var(--neon-red);
+  }
+
+  #resultadoEficiencia {
+    font-size: 2em;
+    font-weight: bold;
+    margin-top: 20px;
+    color: var(--neon-blue);
+    text-shadow: 0 0 15px var(--neon-blue);
+  }
+</style>
+
+<!-- CONTENEDOR DE LA APLICACIÓN -->
+<div class="dbz-theme">
+
+  <!-- Módulo 1: Autenticación -->
+  <div id="panelAuth" class="cyber-panel">
+    <h2>Sistema de Acceso</h2>
+    <input type="text" id="inpToken" class="cyber-input" placeholder="INGRESE TOKEN (EJ: TK-140544)">
+    <input type="password" id="inpPin" class="cyber-input" placeholder="INGRESE PIN">
+    <button class="cyber-btn" onclick="iniciarSesion()">Desbloquear Terminal</button>
+    <p id="msgAuth" style="color: var(--neon-red); margin-top: 10px;"></p>
+  </div>
+
+  <!-- Módulo 2: Calculadora Premium (Oculta por defecto) -->
+  <div id="panelCalculadora" class="cyber-panel rojo" style="display: none;">
+    <h2>Calculadora Premium</h2>
+    <p>Operador Activo: <span id="nombreOperador" style="color: var(--neon-blue);"></span></p>
+    
+    <select id="selEstilo" class="cyber-input">
+      <option value="">Cargando metas desde base de datos...</option>
+    </select>
+    
+    <input type="number" id="inpParos" class="cyber-input" placeholder="Minutos Totales de Paro">
+    <input type="number" id="inpDocenas" class="cyber-input" placeholder="Total de Docenas Producidas">
+    
+    <button class="cyber-btn" onclick="procesarCalculo()">Calcular y Sincronizar</button>
+    
+    <div id="resultadoEficiencia">0.00%</div>
+  </div>
+
+</div>
+
+<!-- LÓGICA JAVASCRIPT -->
+<script>
+  // ¡ATENCIÓN! Reemplaza esto con la URL que te dio Apps Script al "Implementar como aplicación web"
+  const URL_APPS_SCRIPT = "TU_URL_DE_APPS_SCRIPT_AQUI"; 
+  
+  const EstadoApp = {
+    usuario: null,
+    token: null,
+    metas: []
+  };
+
+  async function enviarPeticion(payload) {
+    const response = await fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return await response.json();
+  }
+
+  async function iniciarSesion() {
+    const token = document.getElementById('inpToken').value;
+    const pin = document.getElementById('inpPin').value;
+    const msg = document.getElementById('msgAuth');
+    
+    msg.innerText = "Autenticando en la red...";
+
+    try {
+      const data = await enviarPeticion({ accion: 'validar', token: token, pin: pin });
+      
+      if (data.valido) {
+        EstadoApp.usuario = data.usuario;
+        EstadoApp.token = data.token;
+        
+        document.getElementById('panelAuth').style.display = 'none';
+        document.getElementById('panelCalculadora').style.display = 'block';
+        document.getElementById('nombreOperador').innerText = data.usuario;
+        
+        cargarMetas();
+      } else {
+        msg.innerText = "Error: Credenciales denegadas.";
+      }
+    } catch (error) {
+      msg.innerText = "Error de conexión con la matriz.";
+    }
+  }
+
+  async function cargarMetas() {
+    const select = document.getElementById('selEstilo');
+    try {
+      const data = await enviarPeticion({ accion: 'obtenerMetas' });
+      if (data.status === "success") {
+        EstadoApp.metas = data.data;
+        select.innerHTML = '<option value="">-- Selecciona Estilo --</option>';
+        EstadoApp.metas.forEach(meta => {
+          if (meta.estilo) {
+            select.innerHTML += `<option value="${meta.estilo}">${meta.estilo} (Meta base: ${meta.meta_por_hora})</option>`;
+          }
+        });
+      }
+    } catch (error) {
+      select.innerHTML = '<option value="">Error al cargar metas</option>';
+    }
+  }
+
+  async function procesarCalculo() {
+    const estilo = document.getElementById('selEstilo').value;
+    const paros = parseFloat(document.getElementById('inpParos').value) || 0;
+    const docenas = parseFloat(document.getElementById('inpDocenas').value) || 0;
+    
+    if (!estilo) {
+      alert("Debes seleccionar un estilo de la base de datos.");
+      return;
+    }
+
+    const metaEstilo = EstadoApp.metas.find(m => m.estilo == estilo);
+    
+    // Cálculo de Turno (11 horas = 660 min)
+    const MINUTOS_TURNO = 660;
+    const tiempoEfectivo = MINUTOS_TURNO - paros;
+    const metaAjustada = (metaEstilo.meta_por_hora / 60) * tiempoEfectivo;
+    const eficiencia = (docenas / metaAjustada) * 100;
+    const efiStr = eficiencia.toFixed(2) + '%';
+
+    document.getElementById('resultadoEficiencia').innerText = efiStr;
+    document.getElementById('resultadoEficiencia').style.color = (eficiencia >= 100) ? "var(--neon-blue)" : "var(--neon-red)";
+
+    const payload = {
+      accion: 'guardarPremium',
+      datos: {
+        usuarioToken: EstadoApp.token,
+        estilo: estilo,
+        metaPorHora: metaEstilo.meta_por_hora,
+        parosMinutos: paros,
+        totalDocenas: docenas,
+        eficienciaResultante: efiStr
+      }
+    };
+
+    // Sincronizar en segundo plano
+    try {
+      const respuesta = await enviarPeticion(payload);
+      console.log("Cálculo sincronizado:", respuesta.message);
+    } catch (e) {
+      console.error("Fallo al sincronizar cálculo:", e);
+    }
+  }
+</script>
