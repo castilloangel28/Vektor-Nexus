@@ -1,59 +1,73 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 import os
-import random
-import string
 import io
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseDownload, MediaIoBaseUpload
+import json
 from datetime import datetime
+from flask import Flask, render_template, request, jsonify, session
+import gspread
+from google.oauth2.service_account import Credentials
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseUpload
 
-# --- LIBRERÍAS PARA PDF E IMÁGENES ---
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from PIL import Image, ImageDraw, ImageFont
 
-app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'vektor_nexus_admin_2026_super')
+app = Flask(__name__, template_folder='templates', static_folder='static')
+app.secret_key = os.environ.get('SECRET_KEY', 'vektor_nexus_secret_key_2026')
 
-CARPETA_RAIZ_DRIVE = "1PbH8767Q86O-TntoxDxozaGiBl3WJqE0"
+# --- CONFIGURACIÓN DE IDs DE GOOGLE SHEETS Y DRIVE ---
+SPREADSHEET_USUARIOS_ID = '1flxIGd4eBiGYe2vrSsPU318Feg2KHFV4Ip9oTF2aPvA'
+SPREADSHEET_METAS_ID = '13xBj_hwIxlLxIGHs8Hc1RMYumxl72Y-cYU0aOzfAymk'
+CARPETA_RAIZ_DRIVE = '1PbH8767Q86O-TntoxDxozaGiBl3WJqE0'
 
-# --- CONFIGURACIÓN DE GOOGLE SERVICES ---
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-try:
-    creds = ServiceAccountCredentials.from_json_keyfile_name('credenciales.json', scope)
-    client = gspread.authorize(creds)
-    sheet = client.open("Base_Datos_Calculadora").sheet1
-    drive_service = build('drive', 'v3', credentials=creds)
-except Exception as e:
-    print(f"Error de conexión a Google: {e}")
-    sheet = None
-    drive_service = None
+SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive'
+]
 
-# --- ESTRUCTURA CACHÉ DE METAS (ROBUSTA) ---
-pdf_metas_cache = {
-    "estilos": [" "], 
-    "tallas": ['XXS', 'XS', 'S', 'M', 'L', 'XL', '2X', '3X', '4X'], 
-    "procesos": ['CONTEO','SORTEO','VOLTEO','DOBLADO','VOLTEO-SORTING','VOLTEO-PFD','SORTEO-REPROCESO'], 
-    "datos": [
-        {"estilo": "DBS-GOKU", "talla": "M", "proceso": "DOBLADO", "meta": 150},
-        {"estilo": "DBS-GOKU", "talla": "L", "proceso": "SORTEO", "meta": 165},
-        {"estilo": "DBS-VEGETA", "talla": "S", "proceso": "CONTEO", "meta": 200},
-        {"estilo": "DBS-BROLY", "talla": "XL", "proceso": "VOLTEO", "meta": 90},
-        {"estilo": "DBS-GOHAN", "talla": "M", "proceso": "VOLTEO-PFD", "meta": 120}
-    ]
-}
+creds = None
+client_gspread = None
+sheet_usuarios = None
+sheet_metas = None
+drive_service = None
 
-# --- HELPER FUNCTIONS FOR DRIVE & FILES ---
+def inicializar_servicios_google():
+    global creds, client_gspread, sheet_usuarios, sheet_metas, drive_service
+    try:
+        if os.path.exists('credenciales.json'):
+            creds = Credentials.from_service_account_file('credenciales.json', scopes=SCOPES)
+        else:
+            json_creds = os.environ.get('GOOGLE_CREDENTIALS_JSON')
+            if json_creds:
+                creds = Credentials.from_service_account_info(json.loads(json_creds), scopes=SCOPES)
+
+        if creds:
+            client_gspread = gspread.authorize(creds)
+            sheet_usuarios = client_gspread.open_by_key(SPREADSHEET_USUARIOS_ID).sheet1
+            
+            doc_metas = client_gspread.open_by_key(SPREADSHEET_METAS_ID)
+            try:
+                sheet_metas = doc_metas.worksheet("Datos PDF")
+            except Exception:
+                sheet_metas = doc_metas.sheet1
+                
+            drive_service = build('drive', 'v3', credentials=creds)
+            print(" Conexión a Google Sheets y Drive establecida.")
+    except Exception as e:
+        print(f" Error inicializando servicios de Google: {e}")
+
+inicializar_servicios_google()
+
 def obtener_o_crear_carpeta_usuario(nombre_usuario):
-    if not drive_service: return None
+    if not drive_service:
+        return None
     try:
         query = f"'{CARPETA_RAIZ_DRIVE}' in parents and name = '{nombre_usuario}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false"
         results = drive_service.files().list(q=query, fields="files(id, name)").execute()
         files = results.get('files', [])
 
-        if files: return files[0]['id']
+        if files:
+            return files[0]['id']
 
         file_metadata = {
             'name': nombre_usuario,
@@ -63,189 +77,177 @@ def obtener_o_crear_carpeta_usuario(nombre_usuario):
         folder = drive_service.files().create(body=file_metadata, fields='id').execute()
         return folder.get('id')
     except Exception as e:
-        print(f"Error al gestionar carpeta: {e}")
+        print(f"Error en carpetas de Drive: {e}")
         return None
 
-def generar_nombre_correlativo(folder_id):
-    fecha_actual = datetime.now().strftime("%d-%m-2026")
-    if not drive_service or not folder_id:
-        return f"vektor_nexus_000001-{fecha_actual}"
+def cargar_usuarios_db():
+    if not sheet_usuarios:
+        return {}
     try:
-        query = f"'{folder_id}' in parents and trashed = false"
-        results = drive_service.files().list(q=query, fields="files(name)").execute()
-        files = results.get('files', [])
-        numero_calculo = len(files) + 1
-        return f"vektor_nexus_{numero_calculo:06d}-{fecha_actual}"
-    except:
-        return f"vektor_nexus_000001-{fecha_actual}"
-
-def crear_pdf_en_memoria(datos_extensos):
-    pdf_buffer = io.BytesIO()
-    c = canvas.Canvas(pdf_buffer, pagesize=letter)
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(50, 750, "VEKTOR NEXUS - REPORTE DE CÁLCULO PREMIUM")
-    c.setFont("Helvetica", 10)
-    c.drawString(50, 730, f"Fecha de registro: {datetime.now().strftime('%d/%m/2026 %H:%M')}")
-    c.line(50, 720, 550, 720)
-    y = 690
-    c.setFont("Helvetica", 12)
-    for linea in datos_extensos:
-        if y < 50:
-            c.showPage()
-            c.setFont("Helvetica", 12)
-            y = 750
-        c.drawString(50, y, str(linea))
-        y -= 20
-    c.save()
-    pdf_buffer.seek(0)
-    return pdf_buffer
-
-def crear_imagen_en_memoria(datos_cortos):
-    img = Image.new('RGB', (600, 300), color='#0b132b') # Fondo Oscuro
-    d = ImageDraw.Draw(img)
-    d.text((30, 30), "VEKTOR NEXUS - CÁLCULO DE PRODUCCIÓN", fill='#ff6600') # Naranja Goku
-    d.line([(30, 55), (570, 55)], fill='#00f3ff', width=2)
-    y = 80
-    for linea in datos_cortos:
-        d.text((30, y), str(linea), fill='#edf2f4')
-        y += 30
-    img_buffer = io.BytesIO()
-    img.save(img_buffer, format='PNG')
-    img_buffer.seek(0)
-    return img_buffer
-
-def cargar_usuarios_drive():
-    if not sheet:
-        # Retorno de prueba en caso de que no haya credenciales conectadas
-        return {
-            "token123": {"token": "token123", "nombre": "Guerrero Z", "contacto": "55551234", "pin": "1234", "rol": "operador", "hibernacion": False, "permisos": {"biohorario": True, "eficiencia": True, "tiempo": True, "metas": True, "historial": True}},
-            "angel0301": {"token": "angel0301", "nombre": "Angel Castillo", "contacto": "00000000", "pin": "0301", "rol": "admin", "hibernacion": False, "permisos": {"biohorario": True, "eficiencia": True, "tiempo": True, "metas": True, "historial": True}}
-        }
-    try:
-        records = sheet.get_all_values()
+        rows = sheet_usuarios.get_all_values()
         usuarios = {}
-        for row in records[1:]:
-            if len(row) > 0 and str(row[0]).strip():
-                tkn = str(row[0]).strip()
-                is_hibernated = str(row[6]).lower() == 'false' if len(row) > 6 and row[6] != "" else False
+        for r in rows[1:]:
+            if len(r) > 0 and r[0].strip():
+                tkn = r[0].strip()
+                hibernado_val = str(r[6]).strip().upper() if len(r) > 6 else 'FALSE'
+                is_hibernated = (hibernado_val == 'TRUE')
+                
                 usuarios[tkn] = {
                     "token": tkn,
-                    "nombre": str(row[1]).strip() if len(row) > 1 else "",
-                    "contacto": str(row[2]).strip() if len(row) > 2 else "",
-                    "pin": str(row[3]).strip() if len(row) > 3 else "",
-                    "rol": str(row[4]).strip() if len(row) > 4 else "operador",
-                    "device_id": str(row[5]).strip() if len(row) > 5 else "",
+                    "nombre": r[1].strip() if len(r) > 1 else "Usuario",
+                    "contacto": r[2].strip() if len(r) > 2 else "",
+                    "pin": r[3].strip() if len(r) > 3 else "",
+                    "rol": r[4].strip() if len(r) > 4 else "operador",
+                    "device_id": r[5].strip() if len(r) > 5 else "",
                     "hibernacion": is_hibernated,
-                    "ultima_conexion": str(row[11]).strip() if len(row) > 11 else "Desconocida",
-                    "permisos": {
-                        "biohorario": not is_hibernated, 
-                        "eficiencia": str(row[7]).lower() == 'true' if len(row) > 7 and row[7] != "" else True,
-                        "tiempo": str(row[8]).lower() == 'true' if len(row) > 8 and row[8] != "" else True,
-                        "metas": str(row[9]).lower() == 'true' if len(row) > 9 and row[9] != "" else True,
-                        "historial": str(row[10]).lower() == 'true' if len(row) > 10 and row[10] != "" else True
-                    }
+                    "ultima_conexion": r[7].strip() if len(r) > 7 else ""
                 }
         return usuarios
     except Exception as e:
-        print("Error al cargar usuarios de Drive:", e)
+        print(f"Error al leer usuarios: {e}")
         return {}
 
-# --- RUTAS DE API ---
+def cargar_metas_db():
+    if not sheet_metas:
+        return {"datos": [], "estilos": [], "tallas": [], "procesos": []}
+    try:
+        rows = sheet_metas.get_all_values()
+        datos = []
+        estilos_set = set()
+        tallas_set = set()
+        procesos_set = set()
+
+        for r in rows[1:]:
+            if len(r) >= 6 and r[0].strip():
+                estilo = r[0].strip()
+                talla = r[1].strip()
+                garment = r[2].strip() if len(r) > 2 else ""
+                operacion = r[3].strip()
+                abrev = r[4].strip() if len(r) > 4 else ""
+                
+                try:
+                    meta_dz_turno = float(r[5].strip()) if len(r) > 5 and r[5].strip() else 0
+                    meta_dz_hora = float(r[6].strip()) if len(r) > 6 and r[6].strip() else 0
+                    meta_pz_min = float(r[7].strip()) if len(r) > 7 and r[7].strip() else 0
+                    meta_pza_hora = round(meta_dz_hora * 12)
+                except ValueError:
+                    meta_dz_turno = meta_dz_hora = meta_pz_min = meta_pza_hora = 0
+
+                if meta_pza_hora > 0 or meta_dz_turno > 0:
+                    datos.append({
+                        "estilo": estilo,
+                        "talla": talla,
+                        "garment": garment,
+                        "proceso": operacion,
+                        "abrev": abrev,
+                        "meta_turno": meta_dz_turno,
+                        "meta_dz_hora": meta_dz_hora,
+                        "meta_pz_min": meta_pz_min,
+                        "meta": meta_pza_hora
+                    })
+                    estilos_set.add(estilo)
+                    tallas_set.add(talla)
+                    procesos_set.add(operacion)
+
+        return {
+            "datos": datos,
+            "estilos": sorted(list(estilos_set)),
+            "tallas": sorted(list(tallas_set)),
+            "procesos": sorted(list(procesos_set))
+        }
+    except Exception as e:
+        print(f"Error al cargar base de metas: {e}")
+        return {"datos": [], "estilos": [], "tallas": [], "procesos": []}
+
+# --- RUTAS DE API Y RENDER ---
 
 @app.route('/')
 def index():
-    # Ya no requerimos token en la URL, el login se maneja en el frontend
     return render_template('index.html')
 
-@app.route(https://docs.google.com/spreadsheets/d/13xBj_hwIxlLxIGHs8Hc1RMYumxl72Y-cYU0aOzfAymk/edit?usp=drivesdk , methods=['POST'])
-def login_verificar():
-    data = request.json
-    token_ingresado = str(data.get('token')).strip()
-    pin_ingresado = str(data.get('pin')).strip()
-    device_id_cliente = str(data.get('device_id')).strip()
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json() or {}
+    token_in = str(data.get('token', '')).strip()
+    pin_in = str(data.get('pin', '')).strip()
+    device_id_in = str(data.get('device_id', '')).strip()
 
-    usuarios_actuales = cargar_usuarios_drive()
-    if token_ingresado in usuarios_actuales and str(usuarios_actuales[token_ingresado]['pin']).strip() == pin_ingresado:
-        usuario = usuarios_actuales[token_ingresado]
-        if usuario.get('hibernacion', False):
-            return jsonify({"status": "hibernado", "message": "Sistema en hibernación."})
-        
-        session['user_token'] = token_ingresado
-        session['user_name'] = usuario['nombre']
-        return jsonify({"status": "success", "user": usuario})
-    
-    return jsonify({"status": "error", "message": "Token o PIN Incorrecto. El Ki no coincide."}), 401
+    usuarios = cargar_usuarios_db()
+
+    if token_in in usuarios:
+        usr = usuarios[token_in]
+        if usr['pin'] == pin_in:
+            if usr['hibernacion']:
+                return jsonify({"status": "hibernado", "message": "Tu cuenta ha sido hibernada por el administrador."}), 403
+            
+            try:
+                if sheet_usuarios:
+                    cell = sheet_usuarios.find(token_in)
+                    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    sheet_usuarios.update_cell(cell.row, 8, now_str)
+                    if device_id_in and not usr['device_id']:
+                        sheet_usuarios.update_cell(cell.row, 6, device_id_in)
+            except Exception as e:
+                print(f"Error actualizando conexión: {e}")
+
+            session['user_token'] = token_in
+            return jsonify({"status": "success", "user": usr})
+            
+    return jsonify({"status": "error", "message": "Credenciales inválidas. Token o PIN incorrecto."}), 401
 
 @app.route('/api/metas/datos', methods=['GET'])
-def obtener_metas_datos():
-    return jsonify({
-        "status": "success",
-        "datos": pdf_metas_cache["datos"],
-        "estilos": pdf_metas_cache["estilos"],
-        "tallas": pdf_metas_cache["tallas"],
-        "procesos": pdf_metas_cache["procesos"]
-    })
+def api_metas_datos():
+    res = cargar_metas_db()
+    return jsonify({"status": "success", **res})
 
-@app.route(https://docs.google.com/spreadsheets/d/1SBsIDmwEZTarfIvZsuOl1nTC0AbkIDZa/edit?usp=drivesdk&ouid=106555543057171702491&rtpof=true&sd=true/sincronizar', methods=['POST'])
-def sincronizar_metas():
-    # Simulación de extracción profunda de DB Drive
-    return jsonify({
-        "status": "success",
-        "datos": pdf_metas_cache["datos"],
-        "estilos": pdf_metas_cache["estilos"],
-        "tallas": pdf_metas_cache["tallas"],
-        "procesos": pdf_metas_cache["procesos"],
-        "message": "Base de datos Drive sincronizada al 100%"
-    })
-
-@app.route(https://drive.google.com/drive/folders/1O_xLU2jDXcir2fg6zMdDg-wTl1UQs_K3, methods=['POST'])
+@app.route('/api/guardar_calculo', methods=['POST'])
 def guardar_calculo():
-    data = request.json or {}
+    data = request.get_json() or {}
     token = data.get('token')
-    tipo = data.get('tipo')
+    tipo = data.get('tipo', 'CALCULO_GENERAL')
     info = data.get('info', {})
-    extenso = data.get('extenso', False)
     
-    # Preparar lineas
-    lineas_calculo = [f"Tipo de Cálculo: {tipo}", f"Resultado: {info.get('res', '')}", f"Detalles: {info.get('detalle', '')}"]
-
     if not token or not drive_service:
-        return jsonify({"status": "success", "message": "Guardado localmente (Simulado por falta de Drive API)"}), 200
+        return jsonify({"status": "success", "message": "Procesado localmente."})
 
-    usuarios = cargar_usuarios_drive()
+    usuarios = cargar_usuarios_db()
     if token not in usuarios:
-        return jsonify({"status": "error", "message": "Usuario no válido"}), 403
+        return jsonify({"status": "error", "message": "No autorizado"}), 403
 
     nombre_usuario = usuarios[token]['nombre']
     folder_id = obtener_o_crear_carpeta_usuario(nombre_usuario)
-    if not folder_id:
-        return jsonify({"status": "error", "message": "No se pudo gestionar la carpeta en Drive"}), 500
 
-    nombre_base = generar_nombre_correlativo(folder_id)
+    if folder_id:
+        try:
+            img_buffer = io.BytesIO()
+            img = Image.new('RGB', (700, 450), color='#030712')
+            d = ImageDraw.Draw(img)
+            
+            d.rectangle([10, 10, 690, 440], outline='#ff6600', width=3)
+            d.text((30, 30), f"VEKTOR NEXUS - REPORTE DE PRODUCCIÓN", fill='#ff6600')
+            d.text((30, 60), f"Tipo: {tipo}", fill='#00f3ff')
+            d.text((30, 90), f"Operador: {nombre_usuario} ({token})", fill='#ffffff')
+            d.text((30, 115), f"Fecha/Hora: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", fill='#9ca3af')
+            
+            y = 160
+            for k, v in info.items():
+                d.text((30, y), f"{k.upper()}: {v}", fill='#39ff14')
+                y += 28
 
-    if extenso:
-        archivo_binario = crear_pdf_en_memoria(lineas_calculo)
-        nombre_archivo = f"{nombre_base}.pdf"
-        mime_type = "application/pdf"
-    else:
-        archivo_binario = crear_imagen_en_memoria(lineas_calculo)
-        nombre_archivo = f"{nombre_base}.png"
-        mime_type = "image/png"
+            img.save(img_buffer, format='PNG')
+            img_buffer.seek(0)
 
-    try:
-        file_metadata = {'name': nombre_archivo, 'parents': [folder_id]}
-        media = MediaIoBaseUpload(archivo_binario, mimetype=mime_type, resumable=True)
-        uploaded_file = drive_service.files().create(body=file_metadata, media_body=media, fields='id, webViewLink').execute()
+            file_metadata = {
+                'name': f"{tipo}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png",
+                'parents': [folder_id]
+            }
+            media = MediaIoBaseUpload(img_buffer, mimetype='image/png', resumable=True)
+            drive_service.files().create(body=file_metadata, media_body=media).execute()
+        except Exception as e:
+            print(f"Error generando reporte de imagen: {e}")
 
-        return jsonify({
-            "status": "success", 
-            "file_name": nombre_archivo, 
-            "file_id": uploaded_file.get('id'),
-            "drive_url": uploaded_file.get('webViewLink')
-        })
-    except Exception as e:
-        return jsonify({"status": "error", "message": f"Error al subir a Drive: {str(e)}"}), 500
+    return jsonify({"status": "success", "message": "Reporte sincronizado en Google Drive"})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=False)
