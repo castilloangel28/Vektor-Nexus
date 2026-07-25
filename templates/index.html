@@ -677,6 +677,65 @@ function guardarHistorial() {
     alert("💾 Cálculo guardado correctamente en el Historial.");
 }
 
+<!-- ========================================== -->
+<!-- PANEL PREMIUM DE MODERADOR                 -->
+<!-- ========================================== -->
+<div id="view-moderador" class="app-view">
+    <div class="flex items-center justify-between mb-4">
+        <button onclick="switchView('view-menu')" class="p-2 bg-yellow-500 text-black font-bold rounded-xl">←</button>
+        <h2 class="font-orbitron font-extrabold text-yellow-400 text-sm flex items-center gap-1">
+            <span>👑</span> PANEL MODERADOR
+        </h2>
+    </div>
+
+    <!-- Seccion Crear Usuario -->
+    <div class="neon-card border-pink p-4 mb-4 space-y-3">
+        <h3 class="font-orbitron text-xs text-pink-400 font-bold">CREAR NUEVO USUARIO / OPERADOR</h3>
+        <button onclick="crearNuevoUsuario()" class="w-full py-3 bg-gradient-to-r from-pink-500 to-orange-500 text-white font-orbitron font-extrabold rounded-xl text-xs shadow-lg">
+            + GENERAR ACCESO Y LINK
+        </button>
+    </div>
+
+    <!-- Gestión de Permisos Dinámicos -->
+    <div class="neon-card border-cyan p-4 mb-4 space-y-3">
+        <div class="border-b border-slate-800 pb-2">
+            <h3 class="font-orbitron text-xs text-cyan-400 font-bold">⚡ SELECTOR DE ACCESOS PREMIUM</h3>
+            <p class="text-[10px] text-gray-400 font-orbitron">GESTIONA LAS OPCIONES VISIBLES DEL MENÚ POR OPERADOR</p>
+        </div>
+
+        <div class="space-y-2 text-xs font-orbitron">
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" checked class="accent-green-400">
+                <span>⏳ Módulo BioHorario</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" checked class="accent-green-400">
+                <span>📊 Eficiencia Completa</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" checked class="accent-green-400">
+                <span>⏱️ Tiempo por Docenaje</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" checked class="accent-green-400">
+                <span>🎯 Metas Cargas (Filtro PDF/XLSX)</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" checked class="accent-green-400">
+                <span>📁 Historial Guardado</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Lista Global de Usuarios Registrados -->
+    <div class="space-y-2">
+        <h3 class="font-orbitron text-xs text-yellow-400 font-bold mb-2">GESTIÓN GLOBAL DE USUARIOS</h3>
+        <div id="lista-usuarios-moderador" class="space-y-2">
+            <!-- Se renderizan dinámicamente -->
+        </div>
+    </div>
+</div>
+
     </script>
 </body>
 
