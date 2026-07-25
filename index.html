@@ -714,12 +714,24 @@
         // AUTENTICACIÓN UNIFICADA (TOKEN + PIN)
         // AUTENTICACIÓN UNIFICADA (TOKEN + PIN)
 async function verificarAccesoGeneral() {
-    const tokenInput = document.getElementById('token-input').value.trim();
-    const pinInput = document.getElementById('pin-input').value.trim();
+    // 1. Obtenemos los elementos de los inputs (asegúrate de que estos ID coincidan con tu HTML)
+    const tokenInputEl = document.getElementById('token-input') || document.getElementById('token');
+    const pinInputEl = document.getElementById('pin-input') || document.getElementById('pin');
 
-    if(!tokenInput || !pinInput) {
-        return alert("⚠️ Por favor ingresa tu Token y tu PIN de 4 dígitos.");
+    if (!tokenInputEl || !pinInputEl) {
+        alert("⚠️ Error de diseño: No se encontraron los campos de Token o PIN en el HTML.");
+        return;
     }
+
+    const tokenInput = tokenInputEl.value.trim();
+    const pinInput = pinInputEl.value.trim();
+
+    if (!tokenInput || !pinInput) {
+        alert("⚠️ Por favor ingresa tu Token y tu PIN.");
+        return;
+    }
+
+    console.log("Enviando datos al servidor...");
 
     try {
         const res = await fetch('https://vektor-nexus.onrender.com/api/login', {
@@ -727,20 +739,28 @@ async function verificarAccesoGeneral() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: tokenInput, pin: pinInput })
         });
-        
-        const data = await res.json();
 
-        if(data.status === 'success') {
+        if (!res.ok) {
+            throw new Error(`Servidor respondió con estado: ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log("Respuesta recibida:", data);
+
+        if (data.status === 'success') {
             currentToken = tokenInput;
             currentUser = data.user;
-            // Aquí continúa tu lógica de éxito (redirección o apertura de dashboard)
+            alert("¡Acceso concedido!");
+            // Redirección o cambio de vista exitoso
         } else {
-            alert("⚠️ Credenciales incorrectas o acceso denegado.");
+            alert("⚠️ Credenciales incorrectas.");
         }
     } catch (error) {
-        console.error("Error de comunicación:", error);
-        alert("⚠️ Error de conexión con el servidor de Render.");
+        console.error("Falla en la petición:", error);
+        alert("⚠️ No se pudo conectar con el servidor de Render. Revisa la consola (F12).");
     }
+}
+
 }
 
 
