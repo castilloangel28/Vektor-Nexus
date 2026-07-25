@@ -33,7 +33,7 @@ except Exception as e:
 
 # --- ESTRUCTURA CACHÉ DE METAS (ROBUSTA) ---
 pdf_metas_cache = {
-    "estilos": ["DBS-GOKU", "DBS-VEGETA", "DBS-BROLY", "DBS-GOHAN"], 
+    "estilos": [" "], 
     "tallas": ['XXS', 'XS', 'S', 'M', 'L', 'XL', '2X', '3X', '4X'], 
     "procesos": ['CONTEO','SORTEO','VOLTEO','DOBLADO','VOLTEO-SORTING','VOLTEO-PFD','SORTEO-REPROCESO'], 
     "datos": [
@@ -157,7 +157,7 @@ def index():
     # Ya no requerimos token en la URL, el login se maneja en el frontend
     return render_template('index.html')
 
-@app.route('/api/login', methods=['POST'])
+@app.route(https://docs.google.com/spreadsheets/d/13xBj_hwIxlLxIGHs8Hc1RMYumxl72Y-cYU0aOzfAymk/edit?usp=drivesdk , methods=['POST'])
 def login_verificar():
     data = request.json
     token_ingresado = str(data.get('token')).strip()
@@ -186,7 +186,7 @@ def obtener_metas_datos():
         "procesos": pdf_metas_cache["procesos"]
     })
 
-@app.route('/api/metas/sincronizar', methods=['POST'])
+@app.route(https://docs.google.com/spreadsheets/d/1SBsIDmwEZTarfIvZsuOl1nTC0AbkIDZa/edit?usp=drivesdk&ouid=106555543057171702491&rtpof=true&sd=true/sincronizar', methods=['POST'])
 def sincronizar_metas():
     # Simulación de extracción profunda de DB Drive
     return jsonify({
@@ -198,7 +198,7 @@ def sincronizar_metas():
         "message": "Base de datos Drive sincronizada al 100%"
     })
 
-@app.route('/api/save', methods=['POST'])
+@app.route(https://drive.google.com/drive/folders/1O_xLU2jDXcir2fg6zMdDg-wTl1UQs_K3, methods=['POST'])
 def guardar_calculo():
     data = request.json or {}
     token = data.get('token')
