@@ -712,13 +712,37 @@
         });
 
         // AUTENTICACIÓN UNIFICADA (TOKEN + PIN)
-        async function verificarAccesoGeneral() {
-            const tokenInput = document.getElementById('token-input').value.trim();
-            const pinInput = document.getElementById('pin-input').value.trim();
+        // AUTENTICACIÓN UNIFICADA (TOKEN + PIN)
+async function verificarAccesoGeneral() {
+    const tokenInput = document.getElementById('token-input').value.trim();
+    const pinInput = document.getElementById('pin-input').value.trim();
 
-            if(!tokenInput || !pinInput) {
-                return alert("⚠️ Por favor ingresa tu Token y tu PIN de 4 dígitos.");
-            }
+    if(!tokenInput || !pinInput) {
+        return alert("⚠️ Por favor ingresa tu Token y tu PIN de 4 dígitos.");
+    }
+
+    try {
+        const res = await fetch('https://vektor-nexus.onrender.com/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: tokenInput, pin: pinInput })
+        });
+        
+        const data = await res.json();
+
+        if(data.status === 'success') {
+            currentToken = tokenInput;
+            currentUser = data.user;
+            // Aquí continúa tu lógica de éxito (redirección o apertura de dashboard)
+        } else {
+            alert("⚠️ Credenciales incorrectas o acceso denegado.");
+        }
+    } catch (error) {
+        console.error("Error de comunicación:", error);
+        alert("⚠️ Error de conexión con el servidor de Render.");
+    }
+}
+
 
             try {
                 const res = await fetch('/api/login', {
