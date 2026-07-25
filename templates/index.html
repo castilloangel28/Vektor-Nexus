@@ -3,107 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#030712">
-    <title>VEKTOR NEXUS - Calculadora Inteligente</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* ==========================================================================
-           1. FUENTES Y VARIABLES GLOBALES (THEME DBS)
-           ========================================================================== */
-        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;600;700&family=Orbitron:wght@400;500;700;900&display=swap');
+    <title>VEKTOR NEXUS - Dragon Ball Super Industrial PWA System</title>
 
+    <!-- Tailwind CSS & Animate.css -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <!-- Fuentes Google: Orbitron, Chakra Petch, Rajdhani -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,500;0,700;1,400&family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
         :root {
             --gi-orange: #ff6600;
+            --gi-orange-glow: rgba(255, 102, 0, 0.6);
             --gi-orange-dark: #cc5200;
-            --gi-blue: #0044ff;
-            --gi-blue-dark: #0033cc;
+            --gi-blue: #0055ff;
             --ki-green: #39ff14;
-            --ki-green-dark: #29b30f;
-            --ui-silver: #e2e8f0;
+            --ki-green-glow: rgba(57, 255, 20, 0.5);
             --god-red: #ff003c;
-            --god-red-dark: #b3002a;
+            --god-red-glow: rgba(255, 0, 60, 0.6);
+            --ultra-instinct: #00f3ff;
+            --ultra-instinct-glow: rgba(0, 243, 255, 0.7);
             --bg-void: #030712;
-            --bg-panel: #111827;
-            --bg-panel-light: #1f2937;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
+            --panel-bg: rgba(15, 23, 42, 0.94);
+            --card-border: rgba(255, 255, 255, 0.08);
         }
 
-        /* ==========================================================================
-           2. CONFIGURACIÓN BASE Y RESET
-           ========================================================================== */
-        *, *::before, *::after {
+        /* --- TEMA ROSÉ (SUPER SAIYAJIN ROSÉ) --- */
+        body.theme-rose {
+            --gi-orange: #ff2a8d;
+            --gi-orange-glow: rgba(255, 42, 141, 0.6);
+            --gi-orange-dark: #b30054;
+            --ultra-instinct: #ff77bc;
+            --ultra-instinct-glow: rgba(255, 119, 188, 0.7);
+            --ki-green: #e056fd;
+            --bg-void: #0d020d;
+        }
+
+        /* --- TEMA ULTRA INSTINTO --- */
+        body.theme-ui {
+            --gi-orange: #e2e8f0;
+            --gi-orange-glow: rgba(226, 232, 240, 0.8);
+            --gi-orange-dark: #94a3b8;
+            --ultra-instinct: #38bdf8;
+            --ki-green: #67e8f9;
+            --bg-void: #020617;
+        }
+
+        * {
             box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body { 
             background-color: var(--bg-void);
-            color: var(--text-main); 
+            color: #f3f4f6; 
             font-family: 'Chakra Petch', sans-serif; 
             overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, var(--bg-void) 70%);
-            background-attachment: fixed;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(30, 41, 59, 0.8) 0%, var(--bg-void) 75%),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 24px;
             min-height: 100vh;
             margin: 0;
             padding: 0;
         }
 
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .font-rajdhani { font-family: 'Rajdhani', sans-serif; }
 
-        /* ==========================================================================
-           3. ANIMACIONES Y EFECTOS KEYFRAMES (KI, AURAS, TRANSICIONES)
-           ========================================================================== */
-        @keyframes pulse-aura {
-            0% { box-shadow: 0 0 20px rgba(255, 102, 0, 0.6), 0 0 40px rgba(255, 102, 0, 0.4), inset 0 0 10px rgba(255, 204, 0, 0.5); }
-            100% { box-shadow: 0 0 40px rgba(255, 204, 0, 0.9), 0 0 80px rgba(255, 102, 0, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.8); }
+        /* --- EFECTOS VISUALES Y KI AURAS --- */
+        .ki-aura-glow {
+            box-shadow: 0 0 25px var(--gi-orange-glow), inset 0 0 15px rgba(255, 204, 0, 0.3);
+            animation: auraPulse 2.2s infinite alternate ease-in-out;
         }
 
-        @keyframes shenron-flow {
-            0% { transform: translateY(0) scale(1); opacity: 0.3; }
-            50% { transform: translateY(-15px) scale(1.03); opacity: 0.6; }
-            100% { transform: translateY(0) scale(1); opacity: 0.3; }
+        .ki-aura-green {
+            box-shadow: 0 0 25px var(--ki-green-glow);
+            animation: auraPulseGreen 2s infinite alternate ease-in-out;
         }
 
-        @keyframes slideIn { 
-            from { transform: translateY(30px); opacity: 0; } 
-            to { transform: translateY(0); opacity: 1; } 
+        .ki-aura-cyan {
+            box-shadow: 0 0 25px var(--ultra-instinct-glow);
+            animation: auraPulseCyan 1.8s infinite alternate ease-in-out;
         }
 
-        @keyframes slideInRight {
-            from { transform: translateX(50px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        @keyframes auraPulse {
+            0% { box-shadow: 0 0 15px var(--gi-orange-glow); border-color: rgba(255, 102, 0, 0.5); }
+            100% { box-shadow: 0 0 35px var(--gi-orange-glow), 0 0 10px rgba(255, 255, 255, 0.8); border-color: rgba(255, 204, 0, 0.9); }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        @keyframes auraPulseGreen {
+            0% { box-shadow: 0 0 12px var(--ki-green-glow); }
+            100% { box-shadow: 0 0 30px var(--ki-green-glow); }
         }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        @keyframes auraPulseCyan {
+            0% { box-shadow: 0 0 12px var(--ultra-instinct-glow); }
+            100% { box-shadow: 0 0 32px var(--ultra-instinct-glow); }
         }
 
-        @keyframes toast-slide {
-            0% { transform: translateX(100%); opacity: 0; }
-            10% { transform: translateX(0); opacity: 1; }
-            90% { transform: translateX(0); opacity: 1; }
-            100% { transform: translateX(100%); opacity: 0; }
-        }
-
-        /* ==========================================================================
-           4. COMPONENTES VISUALES (ESFERA, PANELES, INPUTS)
-           ========================================================================== */
+        /* --- ESFERA DEL DRAGÓN CSS --- */
         .dragon-ball {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #ffea8c, #ffcc00 20%, #ff6600 70%, #cc3300 90%, #801a00 100%);
-            box-shadow: 0 0 30px rgba(255, 102, 0, 0.8), inset -15px -15px 25px rgba(0,0,0,0.6), inset 10px 10px 15px rgba(255,255,255,0.4);
+            background: radial-gradient(circle at 35% 35%, #ffea8c, #ffcc00 25%, #ff6600 70%, #cc3300 90%);
+            box-shadow: 0 0 35px rgba(255, 102, 0, 0.8), inset -5px -5px 15px rgba(0,0,0,0.4);
             position: relative;
             margin: 0 auto 20px auto;
             border: 2px solid #ffaa00;
@@ -111,1105 +121,899 @@
             justify-content: center;
             align-items: center;
             flex-wrap: wrap;
-            padding: 20px;
-            animation: pulse-aura 3s infinite alternate ease-in-out;
-            z-index: 10;
+            padding: 14px;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .dragon-ball::after {
-            content: '';
-            position: absolute;
-            top: 5%;
-            left: 15%;
-            width: 30%;
-            height: 15%;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
-            transform: rotate(-45deg);
-            filter: blur(2px);
+        .dragon-ball:active {
+            transform: scale(0.92) rotate(15deg);
         }
 
         .star {
-            width: 18px; 
-            height: 18px;
+            width: 13px; 
+            height: 13px;
             background-color: #d11a2a;
             clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            margin: 3px;
-            filter: drop-shadow(0 0 2px rgba(0,0,0,0.8));
-            position: relative;
-            z-index: 2;
-        }
-
-        .shenron-aura {
-            position: absolute;
-            top: -20px; left: -20px; right: -20px; bottom: -20px;
-            border-radius: 30px;
-            background: linear-gradient(45deg, transparent, rgba(57, 255, 20, 0.15), transparent);
-            z-index: -1;
-            animation: shenron-flow 5s linear infinite;
-            pointer-events: none;
+            margin: 2px;
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
         }
 
         .solid-panel { 
-            background: rgba(17, 24, 39, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
-            border-radius: 1rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border); 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            border-radius: 1.25rem;
         }
 
         .view-window { 
             position: fixed; 
-            top: 0; 
-            left: 100%; 
-            width: 100%; 
-            height: 100%; 
+            top: 0; left: 100%; 
+            width: 100%; height: 100%; 
             background: var(--bg-void); 
-            background-image: radial-gradient(circle at top right, #1a1a2e 0%, var(--bg-void) 80%);
-            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); 
             z-index: 50; 
             overflow-y: auto;
-            padding-bottom: 100px;
+            padding-bottom: 110px;
         }
         
-        .view-window.active { 
-            left: 0; 
-        }
+        .view-window.active { left: 0; }
 
         .input-pro { 
             background: #0f172a;
             border: 2px solid #1e293b; 
             color: #fff; 
-            border-radius: 0.5rem; 
-            padding: 16px; 
+            border-radius: 0.85rem; 
+            padding: 14px 16px; 
             width: 100%; 
             font-weight: 700; 
             outline: none;
-            transition: all 0.3s ease;
-            font-family: 'Chakra Petch', sans-serif;
-            appearance: none;
+            transition: all 0.25s ease;
+            font-size: 0.95rem;
         }
 
         .input-pro:focus { 
-            border-color: var(--gi-blue);
-            box-shadow: 0 0 20px rgba(0, 68, 255, 0.4); 
+            border-color: var(--ultra-instinct);
+            box-shadow: 0 0 20px var(--ultra-instinct-glow); 
             background: #1e293b;
         }
 
-        .input-pro::placeholder {
-            color: #475569;
-        }
-
-        /* ==========================================================================
-           5. BOTONES Y VARIANTES DE KI
-           ========================================================================== */
-        .btn-nexus {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            text-transform: uppercase;
-            font-weight: 900;
-            letter-spacing: 2px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-nexus:active { 
-            transform: scale(0.92); 
-        }
-
-        .btn-nexus::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .btn-nexus:hover::before {
-            opacity: 1;
-        }
-
-        .nexus-orange { border: 2px solid var(--gi-orange); box-shadow: 0 0 15px rgba(255,102,0,0.2); }
-        .nexus-orange:hover { box-shadow: 0 0 30px rgba(255,102,0,0.6); background: rgba(255,102,0,0.15); }
-
-        .nexus-blue { border: 2px solid var(--gi-blue); box-shadow: 0 0 15px rgba(0,68,255,0.2); }
-        .nexus-blue:hover { box-shadow: 0 0 30px rgba(0,68,255,0.6); background: rgba(0,68,255,0.15); }
-
-        .nexus-green { border: 2px solid var(--ki-green); box-shadow: 0 0 15px rgba(57,255,20,0.2); }
-        .nexus-green:hover { box-shadow: 0 0 30px rgba(57,255,20,0.6); background: rgba(57,255,20,0.15); }
-
-        .nexus-red { border: 2px solid var(--god-red); box-shadow: 0 0 15px rgba(255,0,60,0.2); }
-        .nexus-red:hover { box-shadow: 0 0 30px rgba(255,0,60,0.6); background: rgba(255,0,60,0.15); }
-
-        /* ==========================================================================
-           6. UTILIDADES DE TEXTO Y GRADIENTES
-           ========================================================================== */
         .text-gradient-nexus {
-            background: linear-gradient(90deg, var(--gi-orange), #ffcc00, #fff);
+            background: linear-gradient(90deg, var(--gi-orange), #ffcc00, #ffffff);
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent;
-            background-size: 200% auto;
-            animation: gradientMove 3s linear infinite;
         }
 
-        .text-gradient-god {
-            background: linear-gradient(90deg, var(--god-red), #ff6600, #fff);
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent;
-            background-size: 200% auto;
-            animation: gradientMove 3s linear infinite;
-        }
-
-        .text-gradient-ui {
-            background: linear-gradient(90deg, #e2e8f0, #00f3ff, #fff);
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent;
-            background-size: 200% auto;
-            animation: gradientMove 3s linear infinite;
-        }
-
-        @keyframes gradientMove {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
-        }
-
-        .animate-slide-in { animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
-        .floating { animation: float 4s ease-in-out infinite; }
-
-        /* ==========================================================================
-           7. CUSTOM SCROLLBAR
-           ========================================================================== */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-void);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--gi-orange);
-        }
-
-        /* ==========================================================================
-           8. TOAST NOTIFICATIONS
-           ========================================================================== */
+        /* --- TOASTS NOTIF --- */
         #toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
+            position: fixed; top: 20px; right: 20px; left: 20px; z-index: 9999;
+            display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+            max-width: 440px; margin: 0 auto;
         }
         .toast {
-            min-width: 250px;
-            padding: 15px 20px;
-            border-radius: 8px;
-            color: white;
-            font-family: 'Chakra Petch', sans-serif;
-            font-weight: 700;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            animation: toast-slide 4s ease-in-out forwards;
-            backdrop-filter: blur(10px);
-            border-left: 4px solid white;
+            pointer-events: auto;
+            padding: 14px 20px; border-radius: 14px; color: white; font-weight: 700;
+            font-size: 11px; text-transform: uppercase; border-left: 6px solid white;
+            background: rgba(15, 23, 42, 0.96); box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+            letter-spacing: 0.05em; display: flex; align-items: center; justify-content: space-between;
         }
-        .toast.success { background: rgba(57, 255, 20, 0.2); border-color: var(--ki-green); }
-        .toast.error { background: rgba(255, 0, 60, 0.2); border-color: var(--god-red); }
-        .toast.warning { background: rgba(255, 102, 0, 0.2); border-color: var(--gi-orange); }
-        .toast.info { background: rgba(0, 68, 255, 0.2); border-color: var(--gi-blue); }
+        .toast.success { border-color: var(--ki-green); }
+        .toast.error { border-color: var(--god-red); }
+        .toast.warning { border-color: var(--gi-orange); }
 
+        /* BARRA INFERIOR DE NAVEGACIÓN (TAB BAR) */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            max-width: 28rem; margin: 0 auto;
+            background: rgba(3, 7, 18, 0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; justify-content: space-around;
+            padding: 12px 0 16px 0; z-index: 45;
+        }
+
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            font-size: 9px; font-weight: 800; color: #6b7280;
+            transition: all 0.25s; text-transform: uppercase; letter-spacing: 0.05em;
+            cursor: pointer;
+        }
+        .nav-item.active { color: var(--ultra-instinct); transform: translateY(-2px); }
+
+        /* MODAL DE PERFIL Y AJUSTES */
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
+            z-index: 90; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
     </style>
 </head>
-<body class="max-w-md mx-auto relative shadow-2xl bg-black">
+<body class="max-w-md mx-auto relative shadow-2xl bg-black min-h-screen custom-scrollbar">
 
-    <!-- CONTENEDOR DE TOASTS -->
+    <!-- CONTENEDOR DE NOTIFICACIONES TOAST -->
     <div id="toast-container"></div>
 
-    <!-- ==========================================================================
-         PANTALLA DE BLOQUEO (LOGIN CENTRALIZADO)
-         ========================================================================== -->
-    <div id="lock-screen" class="min-h-screen flex flex-col justify-center items-center p-6 text-center absolute w-full z-40 bg-[var(--bg-void)]">
-        
-        <div class="dragon-ball floating">
+    <!-- LOCK SCREEN / PANTALLA DE ACCESO -->
+    <div id="lock-screen" class="min-h-screen flex flex-col justify-center items-center p-6 text-center absolute w-full z-40 bg-[#030712]">
+        <div class="dragon-ball animate__animated animate__bounceIn" onclick="playEffectAudio('ki_charge')">
             <div class="star"></div><div class="star"></div>
             <div class="star"></div><div class="star"></div>
         </div>
 
-        <h1 class="text-4xl font-black uppercase tracking-widest font-orbitron text-gradient-nexus mb-2">VEKTOR NEXUS</h1>
-        <p class="text-xs text-[#00f3ff] mb-10 uppercase tracking-[0.3em] font-bold">Calculadora Inteligente PWA</p>
+        <h1 class="text-3xl font-black uppercase tracking-widest font-orbitron text-gradient-nexus mb-1">VEKTOR NEXUS</h1>
+        <p class="text-[10px] text-[var(--ultra-instinct)] mb-8 uppercase tracking-[0.3em] font-bold">PWA de Control Industrial v4.5</p>
         
-        <div class="solid-panel p-8 rounded-2xl w-full border-t-4 border-[var(--gi-orange)] relative overflow-hidden animate-slide-in">
-            <div class="shenron-aura"></div>
-            
-            <div class="mb-6 relative z-10">
-                <p class="text-xs text-gray-400 mb-2 uppercase tracking-widest font-bold">Identificación de Ki</p>
-                <div class="w-12 h-1 bg-gray-700 mx-auto rounded-full"></div>
-            </div>
-            
-            <div class="space-y-5 relative z-10">
+        <div class="solid-panel p-6 rounded-2xl w-full border-t-4 border-[var(--gi-orange)] ki-aura-glow">
+            <div class="space-y-4">
                 <div>
-                    <label class="block text-[10px] text-left text-[var(--gi-orange)] uppercase font-bold mb-1 ml-1 tracking-wider">Token de Usuario</label>
-                    <input type="text" id="token-input" autocomplete="off" class="input-pro text-center text-lg tracking-widest" placeholder="EJ: GOKU-123">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-[10px] text-left text-[var(--gi-orange)] uppercase font-bold">Token Operador</label>
+                        <span class="text-[8px] text-gray-500 uppercase">ID Registrado</span>
+                    </div>
+                    <input type="text" id="token-input" class="input-pro text-center text-base uppercase font-orbitron tracking-wider" placeholder="EJ: ANGEL140544">
                 </div>
-                
                 <div>
-                    <label class="block text-[10px] text-left text-[var(--gi-orange)] uppercase font-bold mb-1 ml-1 tracking-wider">PIN de Seguridad (4 Dígitos)</label>
-                    <input type="password" id="pin-input" maxlength="4" autocomplete="current-password" class="input-pro text-center text-3xl tracking-[0.5em] py-3" placeholder="****">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-[10px] text-left text-[var(--gi-orange)] uppercase font-bold">PIN Secreto</label>
+                        <span class="text-[8px] text-gray-500 uppercase">Seguridad</span>
+                    </div>
+                    <input type="password" id="pin-input" maxlength="6" class="input-pro text-center text-2xl tracking-[0.4em]" placeholder="****">
                 </div>
             </div>
-            
-            <button onclick="verificarAcceso()" id="btn-login" class="w-full mt-8 py-4 bg-gradient-to-r from-[var(--gi-orange-dark)] via-[var(--gi-orange)] to-[#ffcc00] hover:from-[#ff8833] hover:to-[#ffdd44] rounded-xl font-black text-black shadow-[0_0_25px_rgba(255,102,0,0.6)] transition-all uppercase tracking-widest text-sm relative z-10">
-                ELEVAR KI Y ENTRAR
+
+            <button onclick="verificarAcceso()" id="btn-login" class="w-full mt-6 py-4 bg-gradient-to-r from-[var(--gi-orange-dark)] to-[#ffcc00] rounded-xl font-black text-black uppercase tracking-widest text-xs shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
+                <span>⚡ ACCEDER AL SISTEMA</span>
             </button>
+
+            <div class="mt-4 pt-4 border-t border-gray-800/80 flex justify-between items-center text-[9px] text-gray-500">
+                <span>Servidor: Google Cloud / Render</span>
+                <span id="conn-status" class="text-green-400 font-bold">● Online</span>
+            </div>
         </div>
-        
-        <div class="mt-12 text-center animate-fade-in relative z-10">
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Sistema Desarrollado por</p>
-            <p class="text-[12px] text-[var(--gi-orange)] font-black uppercase tracking-widest mt-1">Angel Castillo</p>
-            <p class="text-[9px] text-gray-600 mt-2 font-mono">v.2.0.0 DBS Edition - 2026</p>
-        </div>
+
+        <p class="text-[9px] text-gray-600 uppercase mt-8 tracking-widest">Desarrollado para Planta Gildan RN3 • Choloma</p>
     </div>
 
-    <!-- ==========================================================================
-         MENÚ PRINCIPAL (HUB APP)
-         ========================================================================== -->
-    <div id="app-home" class="hidden p-6 min-h-screen relative">
-        <header class="mt-4 mb-8 text-center border-b border-gray-800 pb-6 relative animate-slide-in">
-            <div class="flex justify-center items-center gap-4 mb-4">
-                <div class="dragon-ball" style="width:50px; height:50px; margin:0; padding:10px; animation-duration: 2s;">
-                    <div class="star" style="width:8px; height:8px; margin:1px;"></div><div class="star" style="width:8px; height:8px; margin:1px;"></div>
-                    <div class="star" style="width:8px; height:8px; margin:1px;"></div><div class="star" style="width:8px; height:8px; margin:1px;"></div>
+    <!-- MAIN DASHBOARD -->
+    <div id="app-home" class="hidden p-6 min-h-screen pb-28">
+        
+        <!-- HEADER PRINCIPAL -->
+        <header class="mt-2 mb-6">
+            <div class="flex justify-between items-center solid-panel p-4 rounded-xl border-l-4 border-[var(--ki-green)] ki-aura-green">
+                <div class="flex items-center gap-3">
+                    <div onclick="abrirModalPerfil()" class="w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center font-black font-orbitron text-black text-lg cursor-pointer active:scale-90 transition-transform">
+                        <span id="user-avatar-text">OP</span>
+                    </div>
+                    <div>
+                        <h2 class="text-[9px] font-black uppercase text-gray-400 tracking-wider">Operador Activo</h2>
+                        <p id="user-name-display" class="text-sm font-black font-orbitron text-white uppercase truncate max-w-[160px]">---</p>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span id="user-role-badge" class="text-[8px] bg-green-950 text-green-400 px-2 py-0.5 rounded border border-green-800 uppercase font-bold">Operador</span>
+                            <span id="user-token-badge" class="text-[8px] text-gray-400 font-mono">#000000</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-left">
-                    <h1 class="text-2xl font-black leading-none uppercase tracking-tighter font-orbitron text-gradient-nexus">VEKTOR</h1>
-                    <h1 class="text-xl font-black leading-none uppercase tracking-tighter font-orbitron text-white">NEXUS</h1>
+                
+                <div class="flex flex-col items-end gap-1">
+                    <button onclick="abrirModalPerfil()" class="bg-gray-800/80 hover:bg-gray-700 text-cyan-400 p-2 rounded-lg border border-cyan-500/30 text-xs">
+                        ⚙️
+                    </button>
+                    <span class="text-[8px] text-gray-500 font-mono" id="clock-display">00:00:00</span>
                 </div>
-            </div>
-            
-            <div class="solid-panel p-4 rounded-xl border-l-4 border-[var(--ki-green)] relative overflow-hidden flex items-center justify-between">
-                <div class="absolute inset-0 bg-gradient-to-r from-[var(--ki-green)] to-transparent opacity-10"></div>
-                <div class="text-left z-10">
-                    <h2 class="text-[9px] font-black uppercase text-gray-400">Guerrero Conectado</h2>
-                    <p id="user-name-display" class="text-lg font-black font-orbitron text-white mt-0.5 uppercase drop-shadow-md truncate max-w-[200px]">---</p>
-                </div>
-                <button onclick="cerrarSesion()" class="bg-gray-800 hover:bg-red-900 text-white p-2 rounded-lg text-xs font-bold transition-colors z-10 border border-gray-600">
-                    SALIR
-                </button>
             </div>
         </header>
 
-        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pl-2 border-l-2 border-[var(--gi-blue)]">Módulos de Entrenamiento</h3>
+        <!-- WIDGET DE RESUMEN RÁPIDO -->
+        <div class="solid-panel p-4 rounded-xl mb-6 border border-gray-800 flex justify-around items-center text-center">
+            <div>
+                <span class="text-[8px] text-gray-400 uppercase font-bold block">Estatus Turno</span>
+                <span class="text-xs font-black text-green-400 uppercase font-orbitron">EN EJECUCIÓN</span>
+            </div>
+            <div class="h-6 w-px bg-gray-800"></div>
+            <div>
+                <span class="text-[8px] text-gray-400 uppercase font-bold block">Paros Registrados</span>
+                <span id="dash-paros-count" class="text-xs font-black text-amber-400 font-orbitron">0 Mins</span>
+            </div>
+            <div class="h-6 w-px bg-gray-800"></div>
+            <div>
+                <span class="text-[8px] text-gray-400 uppercase font-bold block">Eficiencia Hoy</span>
+                <span id="dash-eff-val" class="text-xs font-black text-[#00f3ff] font-orbitron">0%</span>
+            </div>
+        </div>
 
-        <div class="grid grid-cols-2 gap-4" id="main-menu-grid">
+        <!-- REJILLA DE MÓDULOS DE TRABAJO -->
+        <div class="grid grid-cols-2 gap-4">
             
-            <!-- Módulo Biohorario -->
-            <div id="btn-menu-biohorario" onclick="openView('view-biohorario')" class="btn-nexus solid-panel p-6 rounded-2xl text-center nexus-orange col-span-2 shadow-lg animate-slide-in" style="animation-delay: 0.1s;">
-                <span class="text-4xl block mb-3 drop-shadow-[0_0_10px_rgba(255,102,0,0.8)]">⏳</span>
-                <span class="text-sm font-black text-white tracking-widest">BIOHORARIO NEXUS</span>
-                <p class="text-[9px] text-gray-400 mt-2 font-normal normal-case">Calcula tiempos exactos de producción y descansos.</p>
+            <!-- MODULO 1: BIOHORARIO -->
+            <div onclick="openView('view-biohorario')" class="solid-panel p-5 rounded-2xl text-center border-t-2 border-[var(--gi-orange)] col-span-2 cursor-pointer hover:border-amber-500 transition-all active:scale-[0.98]">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-2xl">⏳</span>
+                    <span class="text-[9px] bg-orange-950/80 text-orange-400 px-2 py-0.5 rounded border border-orange-800 font-bold uppercase">Tiempos</span>
+                </div>
+                <span class="text-xs font-black text-white uppercase font-orbitron block text-left">BIOHORARIO NEXUS</span>
+                <p class="text-[9px] text-gray-400 mt-1 text-left">Cálculo de minutos efectivos, descansos y tiempo muerto acumulado.</p>
             </div>
 
-            <!-- Módulo Eficiencia -->
-            <div id="btn-menu-eficiencia" onclick="openView('view-eficiencia')" class="btn-nexus solid-panel p-5 rounded-2xl text-center nexus-blue animate-slide-in" style="animation-delay: 0.2s;">
-                <span class="text-3xl block mb-2 drop-shadow-[0_0_10px_rgba(0,68,255,0.8)]">⚡</span>
-                <span class="text-[11px] font-black text-white leading-tight">EFICIENCIA<br>KAIO-KEN</span>
+            <!-- MODULO 2: EFICIENCIA KAIO-KEN -->
+            <div onclick="openView('view-eficiencia')" class="solid-panel p-4 rounded-2xl border-t-2 border-[var(--gi-blue)] cursor-pointer hover:border-blue-400 transition-all active:scale-[0.98]">
+                <span class="text-2xl block mb-2">⚡</span>
+                <span class="text-[10px] font-black text-white uppercase font-orbitron block">EFICIENCIA KAIO-KEN</span>
+                <p class="text-[8px] text-gray-400 mt-1">% Cumplimiento Real</p>
             </div>
 
-            <!-- Módulo Tiempo -->
-            <div id="btn-menu-tiempo" onclick="openView('view-tiempo')" class="btn-nexus solid-panel p-5 rounded-2xl text-center nexus-green animate-slide-in" style="animation-delay: 0.3s;">
-                <span class="text-3xl block mb-2 drop-shadow-[0_0_10px_rgba(57,255,20,0.8)]">⏱️</span>
-                <span class="text-[11px] font-black text-white leading-tight">TIEMPO<br>DOCENAJE</span>
+            <!-- MODULO 3: TIEMPO DOCENAJE -->
+            <div onclick="openView('view-tiempo')" class="solid-panel p-4 rounded-2xl border-t-2 border-[var(--ki-green)] cursor-pointer hover:border-green-400 transition-all active:scale-[0.98]">
+                <span class="text-2xl block mb-2">⏱️</span>
+                <span class="text-[10px] font-black text-white uppercase font-orbitron block">TIEMPO DOCENAJE</span>
+                <p class="text-[8px] text-gray-400 mt-1">Seg/Pieza a Proyección</p>
             </div>
 
-            <!-- Módulo Premium VIP -->
-            <div id="btn-menu-premium" onclick="intentarAbrirPremium()" class="btn-nexus solid-panel p-6 rounded-2xl text-center nexus-red col-span-2 relative overflow-hidden animate-slide-in" style="animation-delay: 0.4s;">
-                <div class="absolute inset-0 bg-[var(--god-red)] opacity-5"></div>
-                <div class="flex items-center justify-center gap-4">
-                    <span class="text-4xl block drop-shadow-[0_0_15px_rgba(255,0,60,0.9)]">🔮</span>
-                    <div class="text-left">
-                        <span class="text-sm font-black text-white tracking-widest block text-gradient-god">CALCULADORA VIP</span>
-                        <span class="text-[9px] font-bold text-gray-400 block mt-1">Multi-Carga + Conexión DB Auto</span>
+            <!-- MODULO 4: RADAR DB METAS -->
+            <div onclick="openView('view-metas')" class="solid-panel p-5 rounded-2xl border-2 border-[#00f3ff] col-span-2 cursor-pointer hover:bg-cyan-950/20 transition-all active:scale-[0.98] ki-aura-cyan">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-2xl">🎯</span>
+                    <span class="text-[9px] bg-cyan-950 text-[#00f3ff] px-2 py-0.5 rounded border border-cyan-800 font-bold uppercase">Google Sheets Live</span>
+                </div>
+                <span class="text-xs font-black text-[#00f3ff] uppercase font-orbitron block">RADAR DB METAS</span>
+                <p class="text-[9px] text-gray-300 mt-1">Búsqueda directa de metas por estilo, talla y operación técnica.</p>
+            </div>
+
+            <!-- MODULO 5: REGISTRO DE PAROS -->
+            <div onclick="openView('view-paros')" class="solid-panel p-4 rounded-2xl border-t-2 border-[var(--god-red)] col-span-2 cursor-pointer hover:border-red-500 transition-all active:scale-[0.98]">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">🚨</span>
+                        <span class="text-[10px] font-black text-red-400 uppercase font-orbitron">REGISTRO DE PAROS</span>
                     </div>
+                    <span class="text-[8px] bg-red-950 text-red-300 px-2 py-0.5 rounded uppercase font-bold">Tiempos Muertos</span>
                 </div>
             </div>
 
-            <!-- Módulo DB Metas -->
-            <div id="btn-menu-metas" onclick="openView('view-metas')" class="btn-nexus solid-panel p-5 rounded-2xl text-center border-2 border-[#00f3ff] shadow-[0_0_15px_rgba(0,243,255,0.2)] hover:bg-[#00f3ff]/10 col-span-2 animate-slide-in" style="animation-delay: 0.5s;">
-                <span class="text-3xl block mb-2 drop-shadow-[0_0_10px_rgba(0,243,255,0.8)]">🎯</span>
-                <span class="text-[12px] font-black text-white tracking-widest text-gradient-ui">DB METAS SEARCHING (RADAR)</span>
+            <!-- MODULO 6: CONVERSOR MULTI-UNIDAD -->
+            <div onclick="openView('view-conversor')" class="solid-panel p-4 rounded-2xl border-t-2 border-purple-500 col-span-2 cursor-pointer hover:border-purple-400 transition-all active:scale-[0.98]">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">📐</span>
+                        <span class="text-[10px] font-black text-purple-300 uppercase font-orbitron">CONVERSOR DE UNIDADES</span>
+                    </div>
+                    <span class="text-[8px] bg-purple-950 text-purple-300 px-2 py-0.5 rounded uppercase font-bold">Docenas / Piezas</span>
+                </div>
             </div>
-        </div>
-        
-        <div class="mt-8 pt-4 border-t border-gray-800 text-center">
-            <button onclick="sincronizarDBOffline()" class="text-[10px] text-gray-500 hover:text-white uppercase font-bold tracking-widest transition-colors flex items-center justify-center gap-2 mx-auto">
-                <span>🔄</span> Forzar Sincronización Manual
-            </button>
+
         </div>
     </div>
 
+    <!-- ==================== VISTAS EXTENDIDAS ==================== -->
 
-    <!-- ==========================================================================
-         VISTA 1: BIOHORARIO
-         ========================================================================== -->
-    <div id="view-biohorario" class="view-window p-6">
-        <div class="flex items-center justify-between mb-8 border-b border-gray-800 pb-4">
-            <div class="flex items-center">
-                <button onclick="closeView()" class="text-white font-black text-xl mr-4 px-4 py-2 bg-gradient-to-r from-[var(--gi-orange)] to-[#ffcc00] rounded-xl shadow-[0_0_15px_rgba(255,102,0,0.4)]">←</button>
-                <div>
-                    <h2 class="text-xl font-black font-orbitron text-gradient-nexus uppercase">BIOHORARIO</h2>
-                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1">Gestión de Tiempo Temporal</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="space-y-6 animate-slideInRight">
-            <div class="solid-panel p-5 rounded-xl border border-[var(--gi-orange)] shadow-[0_0_20px_rgba(255,102,0,0.1)]">
-                <h3 class="text-xs font-black text-[var(--gi-orange)] uppercase mb-4 border-b border-gray-700 pb-2">Parámetros del Turno</h3>
-                
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Hora Inicio</label>
-                        <input type="time" id="bio-inicio" class="input-pro text-sm px-2 py-3">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Hora Fin (Actual)</label>
-                        <input type="time" id="bio-fin" class="input-pro text-sm px-2 py-3">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Tiempos Muertos / Breaks (Minutos)</label>
-                    <input type="number" id="bio-descanso" class="input-pro text-center text-lg" placeholder="Ej: 30" value="0">
-                </div>
-            </div>
-
-            <button onclick="calcularBiohorario()" class="w-full py-4 bg-gradient-to-r from-[var(--gi-orange)] to-[#ffcc00] text-black font-black uppercase text-sm rounded-xl shadow-[0_0_20px_rgba(255,102,0,0.5)] active:scale-95 transition-transform">
-                Procesar Tiempo (Ki)
-            </button>
-
-            <div id="bio-resultado" class="hidden solid-panel p-6 rounded-xl border-l-4 border-[var(--ki-green)] text-center animate-fade-in mt-6">
-                <span class="text-[10px] uppercase font-bold text-gray-400 block mb-2">Tiempo Total Efectivo</span>
-                <div class="text-5xl font-black font-orbitron text-white drop-shadow-md" id="bio-res-val">0</div>
-                <span class="text-xs uppercase font-bold text-[var(--ki-green)] block mt-2">Minutos de Producción</span>
-                
-                <div class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-gray-700">
-                    <div>
-                        <span class="text-[9px] block text-gray-500 uppercase">Horas Eq.</span>
-                        <span class="text-sm font-bold text-white" id="bio-res-horas">0 h</span>
-                    </div>
-                    <div>
-                        <span class="text-[9px] block text-gray-500 uppercase">Jornada</span>
-                        <span class="text-sm font-bold text-white" id="bio-res-porcentaje">0%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==========================================================================
-         VISTA 2: EFICIENCIA KAIO-KEN
-         ========================================================================== -->
-    <div id="view-eficiencia" class="view-window p-6">
-        <div class="flex items-center justify-between mb-8 border-b border-gray-800 pb-4">
-            <div class="flex items-center">
-                <button onclick="closeView()" class="text-white font-black text-xl mr-4 px-4 py-2 bg-gradient-to-r from-[var(--gi-blue)] to-[#00aaff] rounded-xl shadow-[0_0_15px_rgba(0,68,255,0.4)]">←</button>
-                <div>
-                    <h2 class="text-xl font-black font-orbitron text-blue-400 uppercase tracking-wider text-shadow">EFICIENCIA</h2>
-                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1">Modo Kaio-Ken Activo</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="space-y-6 animate-slideInRight">
-            <div class="solid-panel p-6 rounded-xl border border-[var(--gi-blue)] shadow-[0_0_20px_rgba(0,68,255,0.1)]">
-                <div class="space-y-5">
-                    <div>
-                        <label class="block text-[10px] font-bold text-[var(--gi-blue)] mb-1 uppercase tracking-wider">Meta Estándar (Pzas/Hora)</label>
-                        <input type="number" id="eff-meta" class="input-pro text-center text-xl text-blue-100" placeholder="Ej: 150">
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Minutos Trabajados</label>
-                            <input type="number" id="eff-mins" class="input-pro text-center text-lg" placeholder="480">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Piezas Producidas</label>
-                            <input type="number" id="eff-hecho" class="input-pro text-center text-lg text-[var(--ki-green)]" placeholder="Ej: 1200">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <button onclick="calcularEficiencia()" class="w-full py-4 bg-gradient-to-r from-[var(--gi-blue-dark)] to-[var(--gi-blue)] text-white font-black uppercase text-sm rounded-xl shadow-[0_0_20px_rgba(0,68,255,0.5)] active:scale-95 transition-transform">
-                Calcular Multiplicador
-            </button>
-
-            <div id="eff-resultado" class="hidden solid-panel p-6 rounded-xl text-center animate-fade-in mt-6 border-2 transition-colors duration-500">
-                <span class="text-[10px] uppercase font-bold text-gray-400 block mb-2 tracking-widest">Nivel de Eficiencia</span>
-                <div class="text-6xl font-black font-orbitron drop-shadow-[0_0_15px_currentColor]" id="eff-res-val">0%</div>
-                <span class="text-xs uppercase font-black block mt-3 tracking-widest" id="eff-res-rango">ESPERANDO DATOS</span>
-                
-                <div class="w-full bg-gray-800 rounded-full h-2 mt-4 overflow-hidden">
-                    <div id="eff-res-bar" class="bg-white h-2 rounded-full transition-all duration-1000" style="width: 0%;"></div>
-                </div>
-                
-                <div class="mt-4 pt-3 border-t border-gray-700/50 text-[10px] text-gray-400 font-bold uppercase">
-                    Meta para el tiempo laborado: <span id="eff-res-meta-esperada" class="text-white text-xs">0 pzas</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ==========================================================================
-         VISTA 3: TIEMPO DOCENAJE
-         ========================================================================== -->
-    <div id="view-tiempo" class="view-window p-6">
-        <div class="flex items-center justify-between mb-8 border-b border-gray-800 pb-4">
-            <div class="flex items-center">
-                <button onclick="closeView()" class="text-black font-black text-xl mr-4 px-4 py-2 bg-gradient-to-r from-[var(--ki-green)] to-[#a3ff99] rounded-xl shadow-[0_0_15px_rgba(57,255,20,0.4)]">←</button>
-                <div>
-                    <h2 class="text-xl font-black font-orbitron text-[var(--ki-green)] uppercase tracking-wider">DOCENAJE</h2>
-                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1">Cálculo de Ciclos / Cronómetro</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="space-y-6 animate-slideInRight">
-            <div class="solid-panel p-6 rounded-xl border border-[var(--ki-green)] shadow-[0_0_20px_rgba(57,255,20,0.1)]">
-                <div class="text-center mb-6">
-                    <span class="text-[10px] text-[var(--ki-green)] font-bold uppercase tracking-widest block mb-1">Ingresa el Tiempo por Pieza</span>
-                    <p class="text-[9px] text-gray-400">¿Cuántos segundos tardas en procesar 1 sola pieza?</p>
-                </div>
-                
-                <div class="flex justify-center items-center gap-4 mb-6">
-                    <input type="number" id="td-segs" class="input-pro text-center text-4xl w-32 py-4 text-[var(--ki-green)]" placeholder="0.0" step="0.1">
-                    <span class="text-xl font-bold text-gray-500">Seg.</span>
-                </div>
-
-                <button onclick="calcularDocenaje()" class="w-full py-4 bg-gray-800 hover:bg-gray-700 border border-[var(--ki-green)] text-[var(--ki-green)] font-black uppercase text-sm rounded-xl shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all">
-                    Generar Proyección
-                </button>
-            </div>
-
-            <div id="td-resultado" class="hidden grid grid-cols-2 gap-4 animate-fade-in">
-                <div class="solid-panel p-4 rounded-xl text-center border-t-2 border-white">
-                    <span class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Meta x Hora</span>
-                    <div class="text-2xl font-black text-white" id="td-res-hora">0</div>
-                    <span class="text-[8px] text-gray-500">Piezas</span>
-                </div>
-                
-                <div class="solid-panel p-4 rounded-xl text-center border-t-2 border-[var(--gi-orange)]">
-                    <span class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Docenas x Hora</span>
-                    <div class="text-2xl font-black text-[var(--gi-orange)]" id="td-res-doc-hora">0.0</div>
-                    <span class="text-[8px] text-gray-500">Dzs</span>
-                </div>
-                
-                <div class="solid-panel p-4 rounded-xl text-center col-span-2 border-t-2 border-[var(--ki-green)]">
-                    <span class="text-[10px] uppercase font-bold text-gray-400 block mb-1">Meta Turno (11 Hrs Efectivas)</span>
-                    <div class="text-4xl font-black text-[var(--ki-green)] font-orbitron drop-shadow-[0_0_10px_rgba(57,255,20,0.5)]" id="td-res-turno">0</div>
-                    <span class="text-[9px] text-gray-500 font-bold uppercase mt-1 block">Piezas Totales</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ==========================================================================
-         VISTA 4: CALCULADORA PREMIUM VIP
-         ========================================================================== -->
-    <div id="view-premium" class="view-window p-6">
+    <!-- VISTA 1: RADAR METAS (COMPLETO) -->
+    <div id="view-metas" class="view-window p-6 custom-scrollbar">
         <div class="flex items-center justify-between mb-6 border-b border-gray-800 pb-4">
             <div class="flex items-center">
-                <button onclick="closeView()" class="text-white font-black text-xl mr-4 px-4 py-2 bg-gradient-to-r from-[var(--god-red)] to-[var(--gi-orange)] rounded-xl shadow-[0_0_15px_rgba(255,0,60,0.5)]">←</button>
+                <button onclick="closeView()" class="text-black font-black text-lg mr-4 px-3 py-1 bg-[#00f3ff] rounded-lg active:scale-90 transition-transform">←</button>
                 <div>
-                    <h2 class="text-lg font-black font-orbitron text-gradient-god uppercase">PREMIUM VIP</h2>
-                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1">Multi-Carga Inteligente</p>
+                    <h2 class="text-base font-black font-orbitron text-[#00f3ff] uppercase">RADAR DE METAS</h2>
+                    <p class="text-[9px] text-gray-400 uppercase">Consultas a Base de Datos Central</p>
                 </div>
             </div>
-            <button onclick="sincronizarDBOffline()" class="bg-[#111827] border border-[var(--god-red)] text-[var(--god-red)] px-3 py-2 rounded-lg text-[10px] font-bold uppercase hover:bg-[var(--god-red)] hover:text-white transition-all shadow-[0_0_10px_rgba(255,0,60,0.3)]">
-                Sync
+            <button onclick="cargarMetasServer()" class="text-xs bg-gray-800 hover:bg-gray-700 text-cyan-400 px-3 py-1.5 rounded-lg border border-cyan-500/30 flex items-center gap-1 active:scale-90 transition-transform">
+                <span>🔄 Sync</span>
             </button>
         </div>
 
-        <div class="solid-panel p-4 rounded-xl border border-gray-800 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center bg-gradient-to-b from-[#1a0000] to-transparent">
-            <div class="w-full md:w-1/2">
-                <label class="block text-[10px] font-black uppercase text-gray-400 mb-2">Paros / Setup (Minutos)</label>
-                <input type="number" id="premium-paros" value="0" oninput="calcularMetricasPremium()" class="input-pro text-[var(--god-red)] text-center text-xl p-2 border-[var(--god-red-dark)]">
-            </div>
-            <div class="w-full md:w-1/2 flex items-end">
-                <button onclick="agregarCargaPremium()" class="w-full bg-gradient-to-r from-[var(--god-red-dark)] to-[var(--god-red)] hover:from-[var(--god-red)] hover:to-[#ff3366] text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest shadow-[0_0_15px_rgba(255,0,60,0.4)] transition-all flex items-center justify-center gap-2">
-                    <span class="text-lg">+</span> Añadir Carga
-                </button>
-            </div>
-        </div>
-
-        <!-- Contenedor dinámico de cargas -->
-        <div id="contenedor-cargas-premium" class="space-y-4 mb-6"></div>
-
-        <!-- Badge de Resultados (Pegajoso al fondo en móvil o fluyendo normal) -->
-        <div id="premium-badge-resultados" class="p-6 rounded-2xl text-center mb-6 shadow-[0_0_30px_rgba(255,0,60,0.2)] border-2 border-[var(--god-red)] transition-all duration-500 bg-gradient-to-b from-[#111] to-[#2a0000] relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-[var(--god-red)] opacity-10 rounded-full blur-3xl"></div>
-            
-            <span class="text-[10px] uppercase font-black text-gray-300 tracking-widest mb-1 block relative z-10">Eficiencia Global VIP</span>
-            <div id="premium-eff-std-main" class="text-6xl font-black font-orbitron text-[var(--god-red)] drop-shadow-[0_0_15px_rgba(255,0,60,0.8)] my-2 relative z-10">0.00%</div>
-
-            <div class="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-red-900/50 relative z-10">
-                <div class="bg-black/30 p-3 rounded-lg border border-red-900/30">
-                    <span class="text-[9px] uppercase font-black text-gray-400 block mb-1">Meta Ajustada (Dzs)</span>
-                    <span id="premium-meta-final" class="text-2xl font-black font-orbitron text-white">0</span>
-                </div>
-                <div class="bg-black/30 p-3 rounded-lg border border-red-900/30">
-                    <span class="text-[9px] uppercase font-black text-gray-400 block mb-1">Prod. Real (Dzs)</span>
-                    <span id="premium-total-docenas" class="text-2xl font-black font-orbitron text-white">0.00</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- ==========================================================================
-         VISTA 5: DB METAS SEARCHING (RADAR)
-         ========================================================================== -->
-    <div id="view-metas" class="view-window p-6">
-        <div class="flex items-center mb-8 border-b border-gray-800 pb-4">
-            <button onclick="closeView()" class="text-black font-black text-xl mr-4 px-4 py-2 bg-gradient-to-r from-[#00f3ff] to-[#80f9ff] rounded-xl shadow-[0_0_15px_rgba(0,243,255,0.5)]">←</button>
+        <div class="solid-panel p-5 rounded-2xl space-y-4 border-t-2 border-cyan-500">
             <div>
-                <h2 class="text-lg font-black font-orbitron text-gradient-ui uppercase">DB SEARCHING</h2>
-                <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1">Radar de Poder Exacto</p>
+                <label class="text-[10px] text-gray-400 font-bold uppercase block mb-1">1. Estilo de Prenda</label>
+                <select id="sel-estilo" class="input-pro text-xs" onchange="actualizarBusquedaMeta()">
+                    <option value="">Cargando estilos...</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-[10px] text-gray-400 font-bold uppercase block mb-1">2. Talla</label>
+                <select id="sel-talla" class="input-pro text-xs" onchange="actualizarBusquedaMeta()">
+                    <option value="">Cargando tallas...</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-[10px] text-gray-400 font-bold uppercase block mb-1">3. Operación / Proceso Técnico</label>
+                <select id="sel-proceso" class="input-pro text-xs" onchange="actualizarBusquedaMeta()">
+                    <option value="">Cargando procesos...</option>
+                </select>
             </div>
         </div>
 
-        <div class="space-y-6 animate-slideInRight">
-            <div class="solid-panel p-6 rounded-2xl border border-[#00f3ff]/40 shadow-[0_0_20px_rgba(0,243,255,0.1)] relative">
-                
-                <div class="absolute top-2 right-4 flex gap-1">
-                    <div class="w-2 h-2 rounded-full bg-[#00f3ff] animate-ping"></div>
-                    <div class="w-2 h-2 rounded-full bg-[#00f3ff]"></div>
-                </div>
-
-                <h3 class="text-xs font-bold text-[#00f3ff] uppercase tracking-widest mb-4 border-b border-gray-700 pb-2">Filtros del Radar</h3>
-
-                <label class="text-[10px] text-gray-400 font-bold uppercase block mb-1">1. Estilo / Guerrero</label>
-                <select id="sel-estilo" class="input-pro mb-4 text-sm" onchange="actualizarBusquedaMeta()">
-                    <option value="">Sincronizando DB...</option>
-                </select>
-                
-                <label class="text-[10px] text-gray-400 font-bold uppercase block mb-1">2. Talla / Dimensión</label>
-                <select id="sel-talla" class="input-pro mb-4 text-sm" onchange="actualizarBusquedaMeta()">
-                    <option value="">-- Elige Talla --</option>
-                </select>
-                
-                <label class="text-[10px] text-gray-400 font-bold uppercase block mb-1">3. Proceso Táctico</label>
-                <select id="sel-proceso" class="input-pro mb-4 text-sm" onchange="actualizarBusquedaMeta()">
-                    <option value="">Sincronizando DB...</option>
-                </select>
-            </div>
+        <!-- TARJETA DE RESULTADOS DE META -->
+        <div class="solid-panel p-6 rounded-2xl text-center mt-6 border border-[#00f3ff] relative overflow-hidden ki-aura-cyan">
+            <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 block">META ESTÁNDAR PROYECTADA</span>
+            <div id="meta-valor" class="text-6xl font-black font-orbitron text-[#00f3ff] my-3">---</div>
+            <span class="text-[10px] text-cyan-300 font-bold block uppercase mb-4">Piezas por Hora Esperadas</span>
             
-            <div class="bg-gradient-to-br from-[#0b1120] to-[#111827] p-8 rounded-2xl text-center shadow-[0_0_30px_rgba(0,243,255,0.15)] border-2 border-[#00f3ff]/50 relative overflow-hidden transition-all duration-300" id="radar-display">
-                <div class="absolute inset-0 bg-[#00f3ff] opacity-[0.02] bg-[radial-gradient(#00f3ff_1px,transparent_1px)] [background-size:16px_16px]"></div>
-                
-                <p class="text-[10px] font-black uppercase mb-2 text-gray-400 tracking-widest z-10 relative">PODER (META) ESTÁNDAR HORA</p>
-                <div id="meta-valor" class="text-7xl font-black font-orbitron text-[#00f3ff] drop-shadow-[0_0_20px_rgba(0,243,255,0.8)] z-10 relative my-4">---</div>
-                
-                <div class="inline-block bg-black/50 px-4 py-2 rounded-full border border-gray-700 mt-2 relative z-10">
-                    <p id="meta-status" class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Esperando coordenadas...</p>
+            <div id="meta-desglose" class="hidden grid grid-cols-3 gap-2 border-t border-gray-800 pt-4 text-left">
+                <div class="bg-slate-900/80 p-2.5 rounded-xl border border-gray-800 text-center">
+                    <span class="text-[8px] text-gray-400 block uppercase font-bold">Dz / Turno</span>
+                    <span id="meta-dz-turno" class="text-sm font-black text-white font-orbitron">0</span>
+                </div>
+                <div class="bg-slate-900/80 p-2.5 rounded-xl border border-gray-800 text-center">
+                    <span class="text-[8px] text-gray-400 block uppercase font-bold">Dz / Hora</span>
+                    <span id="meta-dz-hora" class="text-sm font-black text-white font-orbitron">0</span>
+                </div>
+                <div class="bg-slate-900/80 p-2.5 rounded-xl border border-gray-800 text-center">
+                    <span class="text-[8px] text-gray-400 block uppercase font-bold">Pz / Minuto</span>
+                    <span id="meta-pz-min" class="text-sm font-black text-white font-orbitron">0</span>
                 </div>
             </div>
-            
+
+            <p id="meta-status" class="text-[10px] font-black uppercase text-gray-500 mt-4">Selecciona los parámetros arriba para consultar</p>
         </div>
     </div>
 
+    <!-- VISTA 2: BIOHORARIO NEXUS -->
+    <div id="view-biohorario" class="view-window p-6 custom-scrollbar">
+        <div class="flex items-center mb-6 border-b border-gray-800 pb-4">
+            <button onclick="closeView()" class="text-black font-black text-lg mr-4 px-3 py-1 bg-[var(--gi-orange)] rounded-lg active:scale-90 transition-transform">←</button>
+            <div>
+                <h2 class="text-base font-black font-orbitron text-[var(--gi-orange)] uppercase">BIOHORARIO NEXUS</h2>
+                <p class="text-[9px] text-gray-400 uppercase">Cálculo de Tiempos Operativos Efectivos</p>
+            </div>
+        </div>
 
-    <!-- ==========================================================================
-         SCRIPTS Y LÓGICA CORE (PWA / OFFLINE / LOGIC)
-         ========================================================================== -->
+        <div class="solid-panel p-5 rounded-2xl space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 mb-1">Hora Inicio Turno</label>
+                    <input type="time" id="bio-inicio" value="07:00" class="input-pro text-xs text-center font-orbitron">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 mb-1">Hora Fin Turno</label>
+                    <input type="time" id="bio-fin" value="18:00" class="input-pro text-xs text-center font-orbitron">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 mb-1">Descansos y Almuerzo (Minutos Totales)</label>
+                <input type="number" id="bio-descanso" value="60" class="input-pro text-center text-lg font-orbitron" placeholder="Ej: 60">
+            </div>
+
+            <button onclick="calcularBiohorario()" class="w-full py-4 bg-gradient-to-r from-orange-600 to-amber-500 text-black font-black uppercase text-xs rounded-xl shadow-lg active:scale-95 transition-transform tracking-wider">
+                PROCESAR MINUTOS EFECTIVOS
+            </button>
+        </div>
+
+        <div id="bio-resultado" class="hidden solid-panel p-5 rounded-xl text-center mt-6 border-l-4 border-[var(--ki-green)] ki-aura-green">
+            <span class="text-[10px] uppercase font-bold text-gray-400 block">TIEMPO EFECTIVO DE TRABAJO</span>
+            <div class="text-5xl font-black font-orbitron text-white my-2" id="bio-res-val">0</div>
+            <span class="text-[10px] text-green-400 uppercase font-bold">Minutos Operativos Disponibles</span>
+        </div>
+    </div>
+
+    <!-- VISTA 3: EFICIENCIA KAIO-KEN -->
+    <div id="view-eficiencia" class="view-window p-6 custom-scrollbar">
+        <div class="flex items-center mb-6 border-b border-gray-800 pb-4">
+            <button onclick="closeView()" class="text-white font-black text-lg mr-4 px-3 py-1 bg-[var(--gi-blue)] rounded-lg active:scale-90 transition-transform">←</button>
+            <div>
+                <h2 class="text-base font-black font-orbitron text-blue-400 uppercase">EFICIENCIA KAIO-KEN</h2>
+                <p class="text-[9px] text-gray-400 uppercase">Medición de Desempeño vs Meta</p>
+            </div>
+        </div>
+
+        <div class="solid-panel p-5 rounded-2xl space-y-4">
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 mb-1">Meta Esperada (Piezas / Hora)</label>
+                <input type="number" id="eff-meta" class="input-pro text-center text-lg font-orbitron" placeholder="Ej: 600">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 mb-1">Mins Laborados</label>
+                    <input type="number" id="eff-mins" value="600" class="input-pro text-center font-orbitron">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 mb-1">Piezas Reales</label>
+                    <input type="number" id="eff-hecho" class="input-pro text-center font-orbitron" placeholder="Ej: 6200">
+                </div>
+            </div>
+
+            <button onclick="calcularEficiencia()" class="w-full py-4 bg-gradient-to-r from-blue-700 to-cyan-500 text-white font-black uppercase text-xs rounded-xl shadow-lg active:scale-95 transition-transform tracking-wider">
+                CALCULAR PORCENTAJE DE EFICIENCIA
+            </button>
+        </div>
+
+        <div id="eff-resultado" class="hidden solid-panel p-5 rounded-xl text-center mt-6 border-t-2 border-[var(--gi-blue)]">
+            <span class="text-[10px] uppercase font-bold text-gray-400 block">EFICIENCIA ALCANZADA</span>
+            <div class="text-5xl font-black font-orbitron text-white my-2" id="eff-res-val">0%</div>
+            <p id="eff-eval" class="text-[10px] font-bold uppercase mt-2 text-gray-400">---</p>
+        </div>
+    </div>
+
+    <!-- VISTA 4: TIEMPO DOCENAJE -->
+    <div id="view-tiempo" class="view-window p-6 custom-scrollbar">
+        <div class="flex items-center mb-6 border-b border-gray-800 pb-4">
+            <button onclick="closeView()" class="text-black font-black text-lg mr-4 px-3 py-1 bg-[var(--ki-green)] rounded-lg active:scale-90 transition-transform">←</button>
+            <div>
+                <h2 class="text-base font-black font-orbitron text-[var(--ki-green)] uppercase">TIEMPO DOCENAJE</h2>
+                <p class="text-[9px] text-gray-400 uppercase">Proyección de Producción</p>
+            </div>
+        </div>
+
+        <div class="solid-panel p-5 rounded-2xl text-center space-y-4">
+            <label class="text-[10px] text-gray-400 font-bold uppercase block">Segundos por Pieza Procesada</label>
+            <input type="number" id="td-segs" step="0.01" class="input-pro text-center text-4xl text-[var(--ki-green)] font-orbitron" placeholder="0.00">
+            
+            <button onclick="calcularDocenaje()" class="w-full py-4 bg-gray-800 border border-[var(--ki-green)] text-[var(--ki-green)] font-black uppercase text-xs rounded-xl shadow-lg active:scale-95 transition-transform tracking-wider">
+                PROYECTAR TURNO (10 HORAS)
+            </button>
+        </div>
+
+        <div id="td-resultado" class="hidden solid-panel p-5 rounded-xl text-center mt-6 border-t-2 border-[var(--ki-green)] ki-aura-green">
+            <span class="text-[10px] uppercase font-bold text-gray-400 block">PROYECTADO EN TURNO</span>
+            <div class="text-4xl font-black text-[var(--ki-green)] font-orbitron my-2" id="td-res-doc">0.0 Dz</div>
+            <p class="text-[10px] text-gray-300 font-bold uppercase" id="td-res-pzas">0 Piezas Totales</p>
+        </div>
+    </div>
+
+    <!-- VISTA 5: REGISTRO DE PAROS -->
+    <div id="view-paros" class="view-window p-6 custom-scrollbar">
+        <div class="flex items-center mb-6 border-b border-gray-800 pb-4">
+            <button onclick="closeView()" class="text-white font-black text-lg mr-4 px-3 py-1 bg-red-600 rounded-lg active:scale-90 transition-transform">←</button>
+            <div>
+                <h2 class="text-base font-black font-orbitron text-red-500 uppercase">TIEMPOS MUERTOS / PAROS</h2>
+                <p class="text-[9px] text-gray-400 uppercase">Registro de Interrupciones</p>
+            </div>
+        </div>
+
+        <div class="solid-panel p-5 rounded-2xl space-y-4 border-t-2 border-red-600">
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 mb-1">Motivo / Causa del Paro</label>
+                <select id="paro-motivo" class="input-pro text-xs">
+                    <option value="Falta de Material">Falta de Material / Insumos</option>
+                    <option value="Falla Mecánica">Falla Mecánica / Mantenimiento</option>
+                    <option value="Cambio de Estilo">Cambio de Estilo / Hilo</option>
+                    <option value="Calidad / Retrabajo">Inspección Calidad / Retrabajo</option>
+                    <option value="Corte de Energía">Corte de Energía / Presión de Aire</option>
+                    <option value="Ajuste de Máquina">Ajuste Técnico / Calibración</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 mb-1">Duración (Minutos)</label>
+                <input type="number" id="paro-mins" class="input-pro text-center text-xl font-orbitron" placeholder="Ej: 15">
+            </div>
+
+            <button onclick="registrarParo()" class="w-full py-4 bg-gradient-to-r from-red-700 to-rose-600 text-white font-black uppercase text-xs rounded-xl shadow-lg active:scale-95 transition-transform tracking-wider">
+                REGISTRAR PARO EN HISTORIAL
+            </button>
+        </div>
+
+        <div class="mt-6">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-xs font-bold uppercase text-gray-400 font-orbitron">Historial del Turno</h3>
+                <button onclick="limpiarParos()" class="text-[8px] text-red-400 uppercase font-bold hover:underline">Limpiar</button>
+            </div>
+            <div id="paros-lista" class="space-y-2">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA 6: CONVERSOR DE UNIDADES INDUSTRIALES -->
+    <div id="view-conversor" class="view-window p-6 custom-scrollbar">
+        <div class="flex items-center mb-6 border-b border-gray-800 pb-4">
+            <button onclick="closeView()" class="text-white font-black text-lg mr-4 px-3 py-1 bg-purple-600 rounded-lg active:scale-90 transition-transform">←</button>
+            <div>
+                <h2 class="text-base font-black font-orbitron text-purple-400 uppercase">CONVERSOR UNIDADES</h2>
+                <p class="text-[9px] text-gray-400 uppercase">Docenas y Piezas</p>
+            </div>
+        </div>
+
+        <div class="solid-panel p-5 rounded-2xl space-y-4">
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 mb-1">Cantidad en Docenas (Dz)</label>
+                <input type="number" id="conv-dz" oninput="convertirDesdeDz()" class="input-pro text-center text-xl font-orbitron" placeholder="0">
+            </div>
+            
+            <div class="flex justify-center text-purple-400 font-bold">⇅</div>
+
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 mb-1">Cantidad en Piezas (Pzas)</label>
+                <input type="number" id="conv-pz" oninput="convertirDesdePz()" class="input-pro text-center text-xl font-orbitron" placeholder="0">
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL DE PERFIL Y AJUSTES ==================== -->
+    <div id="modal-perfil" class="modal-backdrop p-6">
+        <div class="solid-panel p-6 rounded-2xl w-full max-w-sm border border-gray-700 relative animate__animated animate__zoomIn">
+            <button onclick="cerrarModalPerfil()" class="absolute top-4 right-4 text-gray-400 hover:text-white font-bold text-lg">✕</button>
+            
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 mx-auto flex items-center justify-center font-black font-orbitron text-black text-2xl mb-2 shadow-lg">
+                    <span id="modal-avatar-text">OP</span>
+                </div>
+                <h3 id="modal-user-name" class="text-base font-black font-orbitron text-white uppercase">---</h3>
+                <p id="modal-user-token" class="text-[10px] text-orange-400 font-mono">TOKEN: ---</p>
+            </div>
+
+            <div class="space-y-4 text-xs border-t border-b border-gray-800 py-4 mb-6">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400">Rol Asignado:</span>
+                    <span id="modal-user-rol" class="font-bold text-white uppercase">Operador</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400">Estado de Cuenta:</span>
+                    <span class="text-green-400 font-bold uppercase">● Activa</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400">Tema Visual:</span>
+                    <select onchange="cambiarTemaVisual(this.value)" class="bg-gray-800 text-white p-1 rounded text-[10px]">
+                        <option value="default">Goku Normal (Naranja)</option>
+                        <option value="theme-rose">Goku Rosé (Rosa/Violeta)</option>
+                        <option value="theme-ui">Ultra Instinto (Azul/Plata)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="cerrarSesion()" class="w-full py-3 bg-red-900/60 hover:bg-red-800 border border-red-500 text-red-200 rounded-xl font-bold uppercase text-xs transition-colors">
+                CERRAR SESIÓN DE OPERADOR
+            </button>
+        </div>
+    </div>
+
+    <!-- NAVEGACIÓN INFERIOR (TAB BAR) -->
+    <nav class="bottom-nav">
+        <div onclick="closeView()" class="nav-item active" id="nav-home">
+            <span class="text-lg">🏠</span>
+            <span>Inicio</span>
+        </div>
+        <div onclick="openView('view-metas')" class="nav-item" id="nav-metas">
+            <span class="text-lg">🎯</span>
+            <span>Metas</span>
+        </div>
+        <div onclick="openView('view-paros')" class="nav-item" id="nav-paros">
+            <span class="text-lg">🚨</span>
+            <span>Paros</span>
+        </div>
+        <div onclick="abrirModalPerfil()" class="nav-item">
+            <span class="text-lg">👤</span>
+            <span>Perfil</span>
+        </div>
+    </nav>
+
+    <!-- LOGICA JS CENTRAL -->
     <script>
-        // --- 1. ESTADO GLOBAL ---
         let globalUser = null;
-        let cacheEstilos = [];
-        let cacheTallas = ['XXS', 'XS', 'S', 'M', 'L', 'XL', '2X', '3X', '4X', '5X', '6X', 'OS'];
-        let cacheProcesos = [];
-        let cacheMetasGlobal = [];
-        let contadorCargasPremium = 0;
+        let cacheMetas = [];
+        let listaParos = [];
 
-        // --- 2. BASE DE DATOS OFFLINE (FALLBACK MASSIVE ARRAY) ---
-        // Generando una estructura profunda para simular la BD real de metas.
-        // Esto permite que la app funcione incluso si el backend (Drive) está caído.
-        const FALLBACK_DB = [
-            {estilo: "DBS-GOKU", talla: "S", proceso: "CONTEO", meta: 200},
-            {estilo: "DBS-GOKU", talla: "M", proceso: "CONTEO", meta: 190},
-            {estilo: "DBS-GOKU", talla: "L", proceso: "CONTEO", meta: 180},
-            {estilo: "DBS-GOKU", talla: "S", proceso: "SORTEO", meta: 180},
-            {estilo: "DBS-GOKU", talla: "M", proceso: "SORTEO", meta: 175},
-            {estilo: "DBS-GOKU", talla: "L", proceso: "SORTEO", meta: 165},
-            {estilo: "DBS-GOKU", talla: "M", proceso: "DOBLADO", meta: 150},
-            {estilo: "DBS-GOKU", talla: "L", proceso: "DOBLADO", meta: 145},
-            {estilo: "DBS-GOKU-UI", talla: "S", proceso: "CONTEO", meta: 220},
-            {estilo: "DBS-GOKU-UI", talla: "M", proceso: "CONTEO", meta: 210},
-            {estilo: "DBS-GOKU-UI", talla: "L", proceso: "CONTEO", meta: 200},
-            {estilo: "DBS-VEGETA", talla: "S", proceso: "CONTEO", meta: 190},
-            {estilo: "DBS-VEGETA", talla: "M", proceso: "CONTEO", meta: 180},
-            {estilo: "DBS-VEGETA", talla: "L", proceso: "CONTEO", meta: 170},
-            {estilo: "DBS-VEGETA", talla: "M", proceso: "VOLTEO", meta: 120},
-            {estilo: "DBS-BROLY", talla: "L", proceso: "VOLTEO", meta: 90},
-            {estilo: "DBS-BROLY", talla: "XL", proceso: "VOLTEO", meta: 85},
-            {estilo: "DBS-BROLY", talla: "2X", proceso: "VOLTEO", meta: 80},
-            {estilo: "DBS-BROLY", talla: "3X", proceso: "VOLTEO", meta: 75},
-            {estilo: "DBS-GOHAN", talla: "M", proceso: "VOLTEO-PFD", meta: 120},
-            {estilo: "DBS-GOHAN", talla: "L", proceso: "VOLTEO-PFD", meta: 110},
-            {estilo: "DBS-PICCOLO", talla: "M", proceso: "SORTEO-REPROCESO", meta: 130},
-            {estilo: "DBS-PICCOLO", talla: "L", proceso: "SORTEO-REPROCESO", meta: 125},
-            {estilo: "DBS-FRIEZA", talla: "S", proceso: "EMPAQUE", meta: 300},
-            {estilo: "DBS-FRIEZA", talla: "M", proceso: "EMPAQUE", meta: 280},
-            {estilo: "DBS-CELL", talla: "M", proceso: "ETIQUETADO", meta: 350},
-            {estilo: "DBS-CELL", talla: "L", proceso: "ETIQUETADO", meta: 330},
-            {estilo: "DBS-BILLS", talla: "M", proceso: "INSPECCION", meta: 100},
-            {estilo: "DBS-WHIS", talla: "OS", proceso: "AUDITORIA", meta: 50}
-        ];
+        // WEB AUDIO SYNTHESIZER (EFECTOS DE SONIDO SINTETIZADOS)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        const FALLBACK_ESTILOS = [...new Set(FALLBACK_DB.map(d => d.estilo))].sort();
-        const FALLBACK_PROCESOS = [...new Set(FALLBACK_DB.map(d => d.proceso))].sort();
+        function playEffectAudio(type) {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
 
-        // Usuarios estáticos simulados para bypass offline
-        const FALLBACK_USERS = {
-            "GOKU": { nombre: "Guerrero Z", pin: "1234", contacto: "55551234" },
-            "ADMIN": { nombre: "Angel Castillo", pin: "0301", contacto: "00000000" }
-        };
+                if(type === 'click') {
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+                } else if(type === 'ki_charge') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.4);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+                }
+            } catch(e){}
+        }
 
-        // --- 3. FUNCIONES UTILITARIAS (TOASTS, NAV) ---
-        function showToast(message, type = 'info') {
+        function showToast(msg, type='warning') {
             const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerText = message;
-            container.appendChild(toast);
-            setTimeout(() => { if(toast.parentElement) toast.remove(); }, 4000);
+            const t = document.createElement('div');
+            t.className = `toast ${type} animate__animated animate__fadeInDown`;
+            t.innerHTML = `<span>${msg}</span><span onclick="this.parentElement.remove()" class="cursor-pointer font-bold ml-2">✕</span>`;
+            container.appendChild(t);
+            playEffectAudio('click');
+            setTimeout(() => {
+                t.classList.replace('animate__fadeInDown', 'animate__fadeOutUp');
+                setTimeout(() => t.remove(), 400);
+            }, 3200);
         }
 
         function openView(id) {
+            playEffectAudio('click');
+            document.querySelectorAll('.view-window').forEach(v => v.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if((id === 'view-metas' || id === 'view-premium') && cacheMetasGlobal.length === 0) {
-                sincronizarDBOffline();
-            }
-            if(id === 'view-premium' && contadorCargasPremium === 0) {
-                agregarCargaPremium();
-            }
+            if(id === 'view-metas' && cacheMetas.length === 0) cargarMetasServer();
         }
 
-        function closeView() { 
-            document.querySelectorAll('.view-window').forEach(v => v.classList.remove('active')); 
+        function closeView() {
+            playEffectAudio('click');
+            document.querySelectorAll('.view-window').forEach(v => v.classList.remove('active'));
+        }
+
+        function abrirModalPerfil() {
+            if(!globalUser) return;
+            document.getElementById('modal-avatar-text').innerText = globalUser.nombre.substring(0,2).toUpperCase();
+            document.getElementById('modal-user-name').innerText = globalUser.nombre;
+            document.getElementById('modal-user-token').innerText = `TOKEN: ${globalUser.token}`;
+            document.getElementById('modal-user-rol').innerText = globalUser.rol;
+            document.getElementById('modal-perfil').classList.add('open');
+        }
+
+        function cerrarModalPerfil() {
+            document.getElementById('modal-perfil').classList.remove('open');
+        }
+
+        function cambiarTemaVisual(tema) {
+            document.body.className = "max-w-md mx-auto relative shadow-2xl bg-black min-h-screen custom-scrollbar " + (tema !== 'default' ? tema : '');
+            localStorage.setItem('vektor_theme', tema);
         }
 
         function cerrarSesion() {
             globalUser = null;
+            localStorage.removeItem('vektor_session');
+            cerrarModalPerfil();
             document.getElementById('app-home').classList.add('hidden');
             document.getElementById('lock-screen').style.display = 'flex';
-            document.getElementById('token-input').value = '';
-            document.getElementById('pin-input').value = '';
-            showToast("Sesión cerrada. Ki disminuido.", "info");
+            showToast("Sesión cerrada correctamente", "warning");
         }
 
-        // --- 4. LÓGICA DE ACCESO (LOGIN) ---
         async function verificarAcceso() {
             const token = document.getElementById('token-input').value.trim().toUpperCase();
             const pin = document.getElementById('pin-input').value.trim();
-            if(!token || !pin) return showToast("⚠️ Debes ingresar el Token y el PIN.", "warning");
 
-            const btn = document.getElementById('btn-login');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'LEYENDO KI...'; btn.disabled = true;
+            if(!token || !pin) return showToast("Ingresa Token y PIN válidos", "error");
 
             try {
-                // Intentar fetch al backend (Flask) si existe
                 const res = await fetch('/api/login', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: token, pin: pin })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ token, pin, device_id: navigator.userAgent })
                 });
                 const data = await res.json();
 
-                if(data.status === 'success') {
-                    loginExitoso(data.user);
-                } else if(data.status === 'hibernado') {
-                    showToast("🛑 SISTEMA HIBERNADO. ACCESO DENEGADO.", "error");
+                if(res.ok && data.status === 'success') {
+                    globalUser = data.user;
+                    localStorage.setItem('vektor_session', JSON.stringify(globalUser));
+                    
+                    document.getElementById('lock-screen').style.display = 'none';
+                    document.getElementById('app-home').classList.remove('hidden');
+                    
+                    document.getElementById('user-name-display').innerText = globalUser.nombre;
+                    document.getElementById('user-role-badge').innerText = globalUser.rol;
+                    document.getElementById('user-token-badge').innerText = `#${globalUser.token}`;
+                    document.getElementById('user-avatar-text').innerText = globalUser.nombre.substring(0,2).toUpperCase();
+                    
+                    playEffectAudio('ki_charge');
+                    showToast(`Bienvenido Operador ${globalUser.nombre}`, "success");
+                    cargarMetasServer();
                 } else {
-                    showToast("❌ " + data.message, "error");
+                    showToast(data.message || "Credenciales incorrectas", "error");
                 }
             } catch(e) {
-                // FALLBACK OFFLINE si el servidor no responde
-                console.warn("Servidor inalcanzable. Usando caché offline.");
-                if(FALLBACK_USERS[token] && FALLBACK_USERS[token].pin === pin) {
-                    loginExitoso(FALLBACK_USERS[token]);
-                    showToast("Conectado en Modo Offline (Caché)", "warning");
-                } else {
-                    showToast("❌ Error de comunicación o Credenciales inválidas.", "error");
-                }
+                showToast("Error de conexión al servidor", "error");
             }
-            btn.innerHTML = originalText; btn.disabled = false;
         }
 
-        function loginExitoso(user) {
-            globalUser = user;
-            globalUser.token = document.getElementById('token-input').value.trim().toUpperCase(); // Forzar guardado de token
-            document.getElementById('lock-screen').style.display = 'none';
-            document.getElementById('app-home').classList.remove('hidden');
-            document.getElementById('user-name-display').innerText = user.nombre;
-            sincronizarDBOffline();
-            showToast(`¡Bienvenido, ${user.nombre}!`, "success");
-        }
-
-
-        // --- 5. LÓGICA DB METAS SEARCHING Y SINCRONIZACIÓN ---
-        async function sincronizarDBOffline() {
-            showToast("Sincronizando Radar de Metas...", "info");
+        async function cargarMetasServer() {
             try {
-                // Simulación de fetch. Si falla, usa Fallback
                 const res = await fetch('/api/metas/datos');
-                if(!res.ok) throw new Error("No network");
                 const data = await res.json();
-                if (data.status === 'success') {
-                    cacheMetasGlobal = data.datos || FALLBACK_DB;
-                    cacheEstilos = data.estilos || FALLBACK_ESTILOS;
-                    cacheProcesos = data.procesos || FALLBACK_PROCESOS;
+                if(data.status === 'success') {
+                    cacheMetas = data.datos;
+                    poblarSelects(data.estilos, data.tallas, data.procesos);
+                    showToast("Metas sincronizadas con Google Sheets", "success");
                 }
             } catch(e) {
-                console.warn("Usando Fallback Database.");
-                cacheMetasGlobal = FALLBACK_DB;
-                cacheEstilos = FALLBACK_ESTILOS;
-                cacheProcesos = FALLBACK_PROCESOS;
+                showToast("Error de sincronización con Sheets", "error");
             }
-            poblarSelectoresMetas(cacheEstilos, cacheProcesos);
-            poblarSelectoresTallas(cacheTallas); // Poblar tallas estáticas
-            showToast("✅ Radar DB Sincronizado 100%", "success");
         }
 
-        function poblarSelectoresMetas(estilos, procesos) {
+        function poblarSelects(estilos, tallas, procesos) {
             const se = document.getElementById('sel-estilo');
-            const sp = document.getElementById('sel-proceso');
-            if(se) { 
-                se.innerHTML = '<option value="">-- Selecciona Guerrero --</option>'; 
-                estilos.forEach(e => se.innerHTML += `<option value="${e}">${e}</option>`); 
-            }
-            if(sp) { 
-                sp.innerHTML = '<option value="">-- Selecciona Táctica --</option>'; 
-                procesos.forEach(p => sp.innerHTML += `<option value="${p}">${p}</option>`); 
-            }
-        }
-        
-        function poblarSelectoresTallas(tallas) {
             const st = document.getElementById('sel-talla');
-            if(st) {
-                st.innerHTML = '<option value="">-- Elige Talla --</option>';
-                tallas.forEach(t => st.innerHTML += `<option value="${t}">${t}</option>`);
-            }
+            const sp = document.getElementById('sel-proceso');
+
+            se.innerHTML = '<option value="">-- Selecciona Estilo --</option>' + estilos.map(e => `<option value="${e}">${e}</option>`).join('');
+            st.innerHTML = '<option value="">-- Selecciona Talla --</option>' + tallas.map(t => `<option value="${t}">${t}</option>`).join('');
+            sp.innerHTML = '<option value="">-- Selecciona Operación --</option>' + procesos.map(p => `<option value="${p}">${p}</option>`).join('');
         }
 
         function actualizarBusquedaMeta() {
             const e = document.getElementById('sel-estilo').value;
-            const t = document.getElementById('sel-talla').value; 
+            const t = document.getElementById('sel-talla').value;
             const p = document.getElementById('sel-proceso').value;
-            const vDiv = document.getElementById('meta-valor'); 
+
+            const vDiv = document.getElementById('meta-valor');
             const sDiv = document.getElementById('meta-status');
-            const radarDisplay = document.getElementById('radar-display');
-            
-            if(!e || !t || !p) { 
-                vDiv.innerText = "---"; 
-                sDiv.innerText = "Faltan coordenadas..."; 
-                radarDisplay.style.borderColor = "rgba(0,243,255,0.5)";
-                return; 
-            }
-            
-            const match = cacheMetasGlobal.find(d => d.estilo === e && d.talla === t && d.proceso === p);
-            
-            if(match) { 
-                vDiv.innerText = match.meta; 
-                sDiv.innerText = "¡Poder Exacto Encontrado!"; 
-                sDiv.className = "text-[10px] font-black uppercase text-[var(--ki-green)] tracking-widest";
-                radarDisplay.style.borderColor = "var(--ki-green)";
-                radarDisplay.style.boxShadow = "0 0 40px rgba(57,255,20,0.3)";
-            } else { 
-                vDiv.innerText = "N/A"; 
-                sDiv.innerText = "Poder no registrado en DB"; 
-                sDiv.className = "text-[10px] font-black uppercase text-[var(--god-red)] tracking-widest";
-                radarDisplay.style.borderColor = "var(--god-red)";
-                radarDisplay.style.boxShadow = "0 0 40px rgba(255,0,60,0.3)";
-            }
-        }
+            const dDiv = document.getElementById('meta-desglose');
 
-        // --- 6. MÓDULO: BIOHORARIO ---
-        function calcularBiohorario() {
-            const hIni = document.getElementById('bio-inicio').value;
-            const hFin = document.getElementById('bio-fin').value;
-            const descansos = parseInt(document.getElementById('bio-descanso').value) || 0;
-
-            if(!hIni || !hFin) return showToast("Faltan horas por definir.", "warning");
-
-            let dIni = new Date(`2000-01-01T${hIni}`);
-            let dFin = new Date(`2000-01-01T${hFin}`);
-            
-            // Si la hora de fin es menor a la de inicio, asume que cruzó la medianoche
-            if(dFin < dIni) dFin.setDate(dFin.getDate() + 1);
-
-            let diffMins = (dFin - dIni) / (1000 * 60);
-            let minsReales = Math.max(0, diffMins - descansos);
-
-            let horasEq = (minsReales / 60).toFixed(2);
-            // Suponiendo jornada de 11h (660 mins)
-            let porcentaje = Math.min(100, (minsReales / 660) * 100).toFixed(1);
-
-            document.getElementById('bio-res-val').innerText = minsReales;
-            document.getElementById('bio-res-horas').innerText = `${horasEq} h`;
-            document.getElementById('bio-res-porcentaje').innerText = `${porcentaje}%`;
-            document.getElementById('bio-resultado').classList.remove('hidden');
-        }
-
-
-        // --- 7. MÓDULO: EFICIENCIA KAIO-KEN ---
-        function calcularEficiencia() {
-            const metaHora = parseFloat(document.getElementById('eff-meta').value);
-            const mins = parseFloat(document.getElementById('eff-mins').value);
-            const pzas = parseFloat(document.getElementById('eff-hecho').value);
-
-            if(!metaHora || !mins || isNaN(pzas)) return showToast("Datos incompletos.", "warning");
-
-            const metaPorMinuto = metaHora / 60;
-            const metaEsperada = metaPorMinuto * mins;
-            
-            let eficiencia = 0;
-            if(metaEsperada > 0) {
-                eficiencia = (pzas / metaEsperada) * 100;
-            }
-
-            const valDiv = document.getElementById('eff-res-val');
-            const rangoDiv = document.getElementById('eff-res-rango');
-            const bar = document.getElementById('eff-res-bar');
-            const box = document.getElementById('eff-resultado');
-
-            valDiv.innerText = `${eficiencia.toFixed(2)}%`;
-            document.getElementById('eff-res-meta-esperada').innerText = Math.round(metaEsperada) + " pzas";
-            box.classList.remove('hidden');
-
-            // Set width visual cap at 100% for the bar, but text can show >100%
-            bar.style.width = `${Math.min(eficiencia, 100)}%`;
-
-            // Lógica de colores estilo DBS
-            if(eficiencia >= 100) {
-                valDiv.style.color = "var(--god-red)";
-                rangoDiv.innerText = "NIVEL DIOS (SOBRESALIENTE)";
-                rangoDiv.style.color = "var(--god-red)";
-                box.style.borderColor = "var(--god-red)";
-                bar.style.backgroundColor = "var(--god-red)";
-            } else if(eficiencia >= 85) {
-                valDiv.style.color = "var(--ki-green)";
-                rangoDiv.innerText = "SSJ BLUE (ACEPTABLE)";
-                rangoDiv.style.color = "var(--ki-green)";
-                box.style.borderColor = "var(--ki-green)";
-                bar.style.backgroundColor = "var(--ki-green)";
-            } else if (eficiencia >= 70) {
-                valDiv.style.color = "var(--gi-orange)";
-                rangoDiv.innerText = "KAIO-KEN BASE (EN RIESGO)";
-                rangoDiv.style.color = "var(--gi-orange)";
-                box.style.borderColor = "var(--gi-orange)";
-                bar.style.backgroundColor = "var(--gi-orange)";
-            } else {
-                valDiv.style.color = "#9ca3af";
-                rangoDiv.innerText = "KI BAJO (REQUIERE APOYO)";
-                rangoDiv.style.color = "#9ca3af";
-                box.style.borderColor = "#4b5563";
-                bar.style.backgroundColor = "#9ca3af";
-            }
-        }
-
-
-        // --- 8. MÓDULO: TIEMPO DOCENAJE ---
-        function calcularDocenaje() {
-            const segs = parseFloat(document.getElementById('td-segs').value);
-            if(!segs || segs <= 0) return showToast("Ingresa un tiempo válido.", "warning");
-
-            // Meta por hora (3600 segs)
-            const metaHora = 3600 / segs;
-            const docenasHora = metaHora / 12;
-            const metaTurno = metaHora * 11; // Jornada estándar de 11 hrs
-
-            document.getElementById('td-res-hora').innerText = Math.round(metaHora);
-            document.getElementById('td-res-doc-hora').innerText = docenasHora.toFixed(2);
-            document.getElementById('td-res-turno').innerText = Math.round(metaTurno);
-            
-            document.getElementById('td-resultado').classList.remove('hidden');
-        }
-
-
-        // --- 9. MÓDULO: PREMIUM VIP (MULTICARGA) ---
-        function intentarAbrirPremium() {
-            if(!globalUser) return;
-            const validPin = globalUser.contacto && globalUser.contacto.length >= 4 ? globalUser.contacto.slice(-4) : "0000";
-            
-            // Bypass para ADMINs (Angel)
-            if (globalUser.token === 'ADMIN' || globalUser.token === 'ANGEL0301') {
-                openView('view-premium');
+            if(!e || !t || !p) {
+                vDiv.innerText = "---";
+                sDiv.innerText = "Selecciona todos los parámetros arriba";
+                dDiv.classList.add('hidden');
                 return;
             }
-            
-            const pinCode = prompt("🔑 INGRESA TU PIN VIP (4 últimos dígitos de tu móvil o registro):");
-            if (pinCode === validPin) {
-                openView('view-premium');
-            } else if (pinCode !== null) {
-                showToast("❌ KI VIP INCORRECTO. Acceso denegado.", "error");
-            }
-        }
 
-        function agregarCargaPremium() {
-            contadorCargasPremium++;
-            const container = document.getElementById('contenedor-cargas-premium');
-            const div = document.createElement('div');
-            div.id = `carga-premium-${contadorCargasPremium}`;
-            div.className = "solid-panel p-4 rounded-xl border border-gray-700/50 space-y-3 relative animate-slide-in bg-[#1a202c]";
-            
-            const opcionesEstilos = cacheEstilos.map(e => `<option value="${e}">${e}</option>`).join('');
-            const opcionesTallas = cacheTallas.map(t => `<option value="${t}">${t}</option>`).join('');
-            const opcionesProcesos = cacheProcesos.map(p => `<option value="${p}">${p}</option>`).join('');
-
-            div.innerHTML = `
-                <div class="flex justify-between items-center border-b border-gray-700 pb-2">
-                    <span class="text-xs font-black uppercase font-orbitron text-[var(--god-red)] flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-[var(--god-red)] animate-pulse"></div>
-                        Carga #${contadorCargasPremium}
-                    </span>
-                    <button onclick="this.parentElement.parentElement.remove(); calcularMetricasPremium();" class="text-gray-500 hover:text-red-500 text-xs font-bold transition-colors uppercase">Quitar ✖</button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                        <select class="p-est input-pro text-xs py-2" onchange="actualizarMetaCarga(${contadorCargasPremium})">
-                            <option value="">-- Estilo --</option>${opcionesEstilos}
-                        </select>
-                    </div>
-                    <div>
-                        <select class="p-tal input-pro text-xs py-2" onchange="actualizarMetaCarga(${contadorCargasPremium})">
-                            <option value="">-- Talla --</option>${opcionesTallas}
-                        </select>
-                    </div>
-                    <div>
-                        <select class="p-pro input-pro text-xs py-2" onchange="actualizarMetaCarga(${contadorCargasPremium})">
-                            <option value="">-- Proceso --</option>${opcionesProcesos}
-                        </select>
-                    </div>
-                    <div>
-                        <input type="number" placeholder="Docenas Producidas" oninput="calcularMetricasPremium()" class="p-hecho input-pro text-center text-white py-2">
-                    </div>
-                </div>
-                <div class="flex justify-between items-center bg-black/50 p-2 rounded-lg border border-gray-800">
-                    <span class="text-[9px] uppercase font-bold text-gray-400">Meta Vinculada (Pza/H):</span>
-                    <span id="p-meta-val-${contadorCargasPremium}" data-val="0" class="font-black text-[var(--gi-orange)] font-orbitron text-sm">0</span>
-                </div>
-            `;
-            container.appendChild(div);
-        }
-
-        function actualizarMetaCarga(id) {
-            const el = document.getElementById(`carga-premium-${id}`);
-            if(!el) return;
-            const e = el.querySelector('.p-est').value;
-            const t = el.querySelector('.p-tal').value;
-            const p = el.querySelector('.p-pro').value;
-            const m = document.getElementById(`p-meta-val-${id}`);
-            
-            if(e && t && p) {
-                const match = cacheMetasGlobal.find(x => x.estilo === e && x.talla === t && x.proceso === p);
-                if(match) { 
-                    m.innerText = match.meta; 
-                    m.dataset.val = match.meta; 
-                    m.style.color = "var(--ki-green)";
-                } else { 
-                    m.innerText = "N/A"; 
-                    m.dataset.val = "0"; 
-                    m.style.color = "var(--god-red)";
-                }
-            } else { 
-                m.innerText = "0"; 
-                m.dataset.val = "0"; 
-                m.style.color = "var(--gi-orange)";
-            }
-            calcularMetricasPremium();
-        }
-
-        function calcularMetricasPremium() {
-            let totalDocenasHechas = 0, sumaDocenasMetaDia = 0, cargasValidas = 0;
-            
-            document.querySelectorAll('[id^="carga-premium-"]').forEach(el => {
-                const docenasHechas = parseFloat(el.querySelector('.p-hecho').value) || 0;
-                const idStr = el.id.split('-')[2];
-                const metaPzaHora = parseFloat(document.getElementById(`p-meta-val-${idStr}`).dataset.val) || 0;
+            const match = cacheMetas.find(x => x.estilo === e && x.talla === t && x.proceso === p);
+            if(match) {
+                vDiv.innerText = match.meta;
+                document.getElementById('meta-dz-turno').innerText = match.meta_turno;
+                document.getElementById('meta-dz-hora').innerText = match.meta_dz_hora;
+                document.getElementById('meta-pz-min').innerText = match.meta_pz_min;
                 
-                totalDocenasHechas += docenasHechas;
-                
-                if(metaPzaHora > 0) { 
-                    // Convertir la meta de pzas/hora a docenas por un día estándar (11 hrs = 660 mins)
-                    // Pza/hr * 11 = Total pzas día. / 12 = Total docenas día.
-                    let docenasMetaDia = (metaPzaHora * 11) / 12;
-                    sumaDocenasMetaDia += docenasMetaDia; 
-                    cargasValidas++; 
-                }
-            });
-
-            const minutosParo = parseFloat(document.getElementById('premium-paros').value) || 0;
-            
-            // Promediar la meta del día si hay varias cargas diferentes
-            const metaGeneralDia = cargasValidas > 0 ? (sumaDocenasMetaDia / cargasValidas) : 0;
-            
-            // Calcular pérdida por paros (Meta/Día divido 660 mins = Meta por minuto * min de paro)
-            const docenasPerdidas = (metaGeneralDia / 660) * minutosParo;
-            
-            // Meta final ajustada restando los paros
-            const metaFinalAjustada = Math.max(0, metaGeneralDia - docenasPerdidas);
-            
-            // Eficiencia final (%)
-            const eficienciaGlobal = metaFinalAjustada > 0 ? (totalDocenasHechas / metaFinalAjustada) * 100 : 0;
-
-            // Renderizar Resultados
-            document.getElementById('premium-total-docenas').innerText = totalDocenasHechas.toFixed(2);
-            document.getElementById('premium-meta-final').innerText = metaFinalAjustada.toFixed(2);
-            
-            const badge = document.getElementById('premium-badge-resultados');
-            const effText = document.getElementById('premium-eff-std-main');
-            effText.innerText = `${eficienciaGlobal.toFixed(2)}%`;
-
-            // Estilos DBS basados en el %
-            if(eficienciaGlobal >= 100) { 
-                badge.style.borderColor = "var(--god-red)"; 
-                badge.style.boxShadow = "0 0 40px rgba(255,0,60,0.4)";
-                effText.style.color = "var(--god-red)"; 
-            } else if(eficienciaGlobal >= 85) { 
-                badge.style.borderColor = "var(--ki-green)"; 
-                badge.style.boxShadow = "0 0 40px rgba(57,255,20,0.3)";
-                effText.style.color = "var(--ki-green)"; 
-            } else if(eficienciaGlobal > 0) { 
-                badge.style.borderColor = "var(--gi-orange)"; 
-                badge.style.boxShadow = "0 0 40px rgba(255,102,0,0.3)";
-                effText.style.color = "var(--gi-orange)"; 
+                dDiv.classList.remove('hidden');
+                sDiv.innerText = "Parámetro Estándar Encontrado";
+                sDiv.className = "text-[10px] font-black uppercase text-cyan-400 mt-4";
             } else {
-                badge.style.borderColor = "#333"; 
-                badge.style.boxShadow = "none";
-                effText.style.color = "#555"; 
+                vDiv.innerText = "N/A";
+                dDiv.classList.add('hidden');
+                sDiv.innerText = "Sin registro para esta combinación";
+                sDiv.className = "text-[10px] font-black uppercase text-red-400 mt-4";
             }
         }
+
+        function calcularBiohorario() {
+            const ini = document.getElementById('bio-inicio').value;
+            const fin = document.getElementById('bio-fin').value;
+            const desc = parseInt(document.getElementById('bio-descanso').value) || 0;
+
+            if(!ini || !fin) return showToast("Selecciona hora de inicio y fin", "warning");
+
+            let d1 = new Date(`2000-01-01T${ini}`);
+            let d2 = new Date(`2000-01-01T${fin}`);
+            if(d2 < d1) d2.setDate(d2.getDate() + 1);
+
+            let diff = (d2 - d1) / (1000 * 60) - desc;
+            let finalVal = Math.max(0, diff);
+
+            document.getElementById('bio-res-val').innerText = finalVal;
+            document.getElementById('bio-resultado').classList.remove('hidden');
+
+            guardarEnDrive('BIOHORARIO', { "Minutos Efectivos": finalVal, "Descansos": `${desc} min` });
+        }
+
+        function calcularEficiencia() {
+            const meta = parseFloat(document.getElementById('eff-meta').value);
+            const mins = parseFloat(document.getElementById('eff-mins').value);
+            const hecho = parseFloat(document.getElementById('eff-hecho').value);
+
+            if(!meta || !mins || isNaN(hecho)) return showToast("Ingresa los datos para la prueba", "warning");
+
+            const metaEsperada = (meta / 60) * mins;
+            const eff = metaEsperada > 0 ? (hecho / metaEsperada) * 100 : 0;
+
+            const resDiv = document.getElementById('eff-res-val');
+            const evalDiv = document.getElementById('eff-eval');
+            
+            resDiv.innerText = `${eff.toFixed(1)}%`;
+            document.getElementById('dash-eff-val').innerText = `${eff.toFixed(1)}%`;
+
+            if(eff >= 100) {
+                resDiv.style.color = 'var(--ki-green)';
+                evalDiv.innerText = "⚡ Nivel Super Saiyajin (Súperó la Meta)";
+            } else if(eff >= 85) {
+                resDiv.style.color = '#ffcc00';
+                evalDiv.innerText = " Rango Óptimo de Producción";
+            } else {
+                resDiv.style.color = 'var(--god-red)';
+                evalDiv.innerText = "🚨 Bajo Desempeño (Revisar Paros)";
+            }
+
+            document.getElementById('eff-resultado').classList.remove('hidden');
+            guardarEnDrive('EFICIENCIA', { "Porcentaje": `${eff.toFixed(1)}%`, "Piezas Realizadas": hecho });
+        }
+
+        function calcularDocenaje() {
+            const segs = parseFloat(document.getElementById('td-segs').value);
+            if(!segs || segs <= 0) return showToast("Ingresa un tiempo válido", "warning");
+
+            const pzas10Horas = (36000 / segs);
+            const docenas = pzas10Horas / 12;
+
+            document.getElementById('td-res-doc').innerText = `${docenas.toFixed(1)} Dz`;
+            document.getElementById('td-res-pzas').innerText = `${Math.round(pzas10Horas)} Piezas en 10 Horas`;
+            document.getElementById('td-resultado').classList.remove('hidden');
+
+            guardarEnDrive('DOCENAJE', { "Segundos/Pieza": segs, "Proyección Dz": docenas.toFixed(1) });
+        }
+
+        function registrarParo() {
+            const motivo = document.getElementById('paro-motivo').value;
+            const mins = parseInt(document.getElementById('paro-mins').value);
+
+            if(!mins || mins <= 0) return showToast("Ingresa una duración válida", "warning");
+
+            const item = { motivo, mins, hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) };
+            listaParos.push(item);
+
+            let totalMins = listaParos.reduce((a, b) => a + b.mins, 0);
+            document.getElementById('dash-paros-count').innerText = `${totalMins} Mins`;
+
+            const container = document.getElementById('paros-lista');
+            const div = document.createElement('div');
+            div.className = "solid-panel p-3 rounded-xl flex justify-between items-center text-xs border-l-4 border-red-500 animate__animated animate__fadeIn";
+            div.innerHTML = `<div><strong class="text-white font-orbitron">${item.motivo}</strong><span class="block text-[9px] text-gray-400">Registrado a las ${item.hora}</span></div><span class="font-orbitron font-bold text-red-400 text-sm">${item.mins} min</span>`;
+            container.appendChild(div);
+
+            document.getElementById('paro-mins').value = '';
+            showToast("Paro registrado en el turno", "success");
+            guardarEnDrive('REGISTRO_PARO', { "Motivo": motivo, "Minutos Pérdida": mins });
+        }
+
+        function limpiarParos() {
+            listaParos = [];
+            document.getElementById('paros-lista').innerHTML = '';
+            document.getElementById('dash-paros-count').innerText = "0 Mins";
+            showToast("Historial de paros reajustado", "warning");
+        }
+
+        function convertirDesdeDz() {
+            const dz = parseFloat(document.getElementById('conv-dz').value) || 0;
+            document.getElementById('conv-pz').value = Math.round(dz * 12);
+        }
+
+        function convertirDesdePz() {
+            const pz = parseFloat(document.getElementById('conv-pz').value) || 0;
+            document.getElementById('conv-dz').value = (pz / 12).toFixed(2);
+        }
+
+        async function guardarEnDrive(tipo, info) {
+            if(!globalUser) return;
+            try {
+                await fetch('/api/guardar_calculo', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ token: globalUser.token, tipo, info })
+                });
+            } catch(e) {
+                console.log("Modo local offline.");
+            }
+        }
+
+        // Reloj en tiempo real
+        setInterval(() => {
+            const now = new Date();
+            const el = document.getElementById('clock-display');
+            if(el) el.innerText = now.toLocaleTimeString();
+        }, 1000);
+
+        // Inicialización de la Aplicación y Restauración de Sesión Local
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('vektor_theme');
+            if(savedTheme) cambiarTemaVisual(savedTheme);
+
+            const saved = localStorage.getItem('vektor_session');
+            if(saved) {
+                try {
+                    globalUser = JSON.parse(saved);
+                    document.getElementById('lock-screen').style.display = 'none';
+                    document.getElementById('app-home').classList.remove('hidden');
+                    
+                    document.getElementById('user-name-display').innerText = globalUser.nombre;
+                    document.getElementById('user-role-badge').innerText = globalUser.rol;
+                    document.getElementById('user-token-badge').innerText = `#${globalUser.token}`;
+                    document.getElementById('user-avatar-text').innerText = globalUser.nombre.substring(0,2).toUpperCase();
+                    cargarMetasServer();
+                } catch(e) { 
+                    localStorage.removeItem('vektor_session'); 
+                }
+            }
+        });
     </script>
 </body>
 </html>
